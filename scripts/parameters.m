@@ -20,8 +20,8 @@ p.g         = 9.80665;
 
 % Initial Conditions
 p.initPosition  = [100 0                          (45*pi/180)   ]; % Initial position in spherical coordinates
-p.initVelocity  = [0   0          -0.1]; % Initial velocity in spherical coordinates
-p.initTwist     = pi/2;
+p.initVelocity  = [0   0.1          0]; % Initial velocity in spherical coordinates
+p.initTwist     = 0;
 p.initOmega     = 0;
 
 

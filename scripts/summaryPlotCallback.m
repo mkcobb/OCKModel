@@ -33,6 +33,9 @@ title('Velocity')
 subplot(3,2,3)
 plot(tsc.MxBFC)
 
+subplot(3,2,5)
+plot(tsc.twist)
+
 subplot(3,2,2)
 plot(tsc.roll)
 
