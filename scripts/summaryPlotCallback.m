@@ -1,5 +1,5 @@
 close all
-
+r = p.initPosition(1);
 plotHemisphere
 hold on
 plotTrajectory

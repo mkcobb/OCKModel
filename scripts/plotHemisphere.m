@@ -1,4 +1,4 @@
-r = p.initPosition(1);
+
 [sphereX,sphereY,sphereZ]=sphere;
 sphereX=r*sphereX;
 sphereY=r*sphereY;
