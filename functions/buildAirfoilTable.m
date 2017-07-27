@@ -1,5 +1,5 @@
 function aeroTable =  buildAirfoilTable()
-files = dir(fullfile(pwd,'airfoil'));
+files = dir(fullfile(pwd,'Airfoil'));
 [~,~,data]=xlsread(files(3).name);
 aeroTable.Re = data{4,2};
 jj=1;
