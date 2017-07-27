@@ -1,0 +1,6 @@
+*.mat -crlf -diff -merge
+*.fig -crlf -diff -merge
+*.slx -crlf -diff -merge
+*.mdl -crlf -diff -merge
+*.jpg -crlf -diff -merge
+*.png -crlf -diff -merge
