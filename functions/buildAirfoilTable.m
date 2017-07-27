@@ -7,7 +7,7 @@ while ~strcmpi(data{jj,1},'alpha')
     jj=jj+1;
 end
 data = cell2mat(data(jj+1:end,1:3));
-aeroTable.alpha = data(:,1);
+aeroTable.alpha = data(:,1)*(pi/180);
 aeroTable.cl = data(:,2);
 aeroTable.cd = data(:,3);
 end
