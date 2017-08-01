@@ -17,10 +17,16 @@ ylabel('y, [m]')
 zlabel('z, [m]')
 
 subplot(3,2,2)
-plot(tsc.alpha)
+plot(tsc.alpha.time,(180/pi)*tsc.alpha.data)
+xlabel('time, [s]')
+ylabel('alpha, [deg]')
+title('Angle of Attack')
 
 subplot(3,2,4)
-plot(tsc.beta)
+plot(tsc.beta.time,(180/pi)*tsc.beta.data)
+xlabel('time, [s]')
+ylabel('beta, [deg]')
+title('Sideslip')
 
 subplot(3,2,6)
 plot(tsc.omega)

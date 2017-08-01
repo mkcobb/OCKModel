@@ -1,5 +1,10 @@
 %% Independent Parameters
 
+% rHat Override
+% 0: allow distance from origin to vary
+% 1: hold lifting body to surface of the sphere
+p.rHatOverride = 1;
+
 % Simulation Time
 p.T = 7;
 
@@ -19,13 +24,44 @@ p.viscosity = 1.4207E-5; % Kinematic viscosity of air
 p.g         = 9.80665;
 
 % Initial Conditions
-p.initPosition  = [100 0                          (45*pi/180)   ]; % Initial position in spherical coordinates
-p.initVelocity  = [0   0.1          0]; % Initial velocity in spherical coordinates
-p.initTwist     = 0;
+p.initPositionGFS  = [100 0  (10*pi/180)   ]; % Initial position in spherical coordinates
+p.initVelocity  = 10;
+p.initTwist     = 0*(pi/180);
 p.initOmega     = 0;
 
 
 %% Dependent parameters
-p.refAreaWing   = p.refLengthWing*p.wingSpan;
-p.J         = (p.mass*p.wingSpan^2)/12; % Rotational inertia about body fixed z axis (approx with (ml^2)/12))
-p.refAreaRudder = p.refLengthRudder*p.rudderSpan;
+p.refAreaWing     = p.refLengthWing*p.wingSpan;
+p.J               = (p.mass*p.wingSpan^2)/12; % Rotational inertia about body fixed z axis (approx with (ml^2)/12))
+p.refAreaRudder   = p.refLengthRudder*p.rudderSpan;
+% Initial velocity in GFS
+p.initVelocityGFS(1) = 0 ;
+p.initVelocityGFS(2) = (p.initVelocity*cos(p.initTwist))/(p.initPositionGFS(1));
+p.initVelocityGFS(3) = -(p.initVelocity*sin(p.initTwist))/(p.initPositionGFS(1));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
