@@ -5,7 +5,7 @@ initVelocityGFC = tsc.velocityGFC.data(1,:);
 initVWindAppGFC = tsc.vWindAppGFC.data(1,:);
 initVWindGFC    = tsc.vWindGFC.data(1,:);
 
-initVWindAppBFC = tsc.vWindAppBFC.data(1,:);
+initvAppWindBFC = tsc.vAppWindBFC.data(1,:);
 initVelocityBFC = [p.initVelocity 0 0];
 initVWindBFC    = tsc.vWindBFC.data(1,:);
 
@@ -53,9 +53,9 @@ plot3([0 0],[0 1],[0 0],'Color','m')
 plot3([0 0],[0 0],[0 1],'Color','m')
 h.wind         = plot3([0,initVWindBFC(1)   ],[0,initVWindBFC(2)   ],[0,initVWindBFC(3)   ],'Color','b');
 h.velocity     = plot3([0,initVelocityBFC(1)],[0,initVelocityBFC(2)],[0,initVelocityBFC(3)],'Color','r');
-h.apparentWind = plot3([initVelocityBFC(1),initVelocityBFC(1)+initVWindAppBFC(1)],...
-                       [initVelocityBFC(2),initVelocityBFC(2)+initVWindAppBFC(2)],...
-                       [initVelocityBFC(3),initVelocityBFC(3)+initVWindAppBFC(3)],'Color','g');
+h.apparentWind = plot3([initVelocityBFC(1),initVelocityBFC(1)+initvAppWindBFC(1)],...
+                       [initVelocityBFC(2),initVelocityBFC(2)+initvAppWindBFC(2)],...
+                       [initVelocityBFC(3),initVelocityBFC(3)+initvAppWindBFC(3)],'Color','g');
 h.fWing   = quiver3(0,0,0,initFWingBFC(1),initFWingBFC(2),initFWingBFC(3),'Color','c');
 h.fRudder = quiver3(0,0,0,initFRudderBFC(1),initFRudderBFC(2),initFRudderBFC(3),'Color','k');
                    

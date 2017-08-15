@@ -4,6 +4,7 @@
 % 0: allow distance from origin to vary
 % 1: hold lifting body to surface of the sphere
 p.rHatOverride = 1;
+p.gravityOnOff = 0;
 
 % Simulation Time
 p.T = 7;
