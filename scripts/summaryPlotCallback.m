@@ -38,7 +38,7 @@ plot(tsc.velocityGFC.time,sqrt(sum(tsc.velocityGFC.data.^2,2)))
 title('Velocity')
 
 subplot(3,2,3)
-plot(tsc.MxBFC)
+plot(tsc.MzBFC)
 
 subplot(3,2,5)
 plot(tsc.twist)
