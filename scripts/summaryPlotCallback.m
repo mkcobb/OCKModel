@@ -1,5 +1,5 @@
 close all
-r = p.initPosition(1);
+r = p.initPositionGFS(1);
 subplot(3,2,[1 3 5])
 plotHemisphere
 hold on
@@ -15,6 +15,7 @@ view([75 30])
 xlabel('x, [m]')
 ylabel('y, [m]')
 zlabel('z, [m]')
+legend([h.trajectory h.BFCinit h.BFCFinal h.unitVecsInit h.unitVecsFinal],{'Path','BFC Init','BFC Final','Unit Vecs Init','Unit Vecs Final'})
 
 subplot(3,2,2)
 plot(tsc.alpha.time,(180/pi)*tsc.alpha.data)

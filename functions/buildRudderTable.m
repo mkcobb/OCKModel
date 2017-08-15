@@ -4,7 +4,7 @@ if ispc
     [~,~,data]=xlsread(fullfile(pwd,'rudder',files(3).name));
     aeroTable.Re = data{4,2};
     jj=1;
-    while ~strcmpi(data{jj,1},'beta')
+    while ~strcmpi(data{jj,1},'alpha')
         jj=jj+1;
     end
     data = cell2mat(data(jj+1:end,1:3));
