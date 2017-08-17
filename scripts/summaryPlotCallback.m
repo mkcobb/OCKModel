@@ -1,36 +1,23 @@
 close all
 r = p.initPositionGFS(1);
-subplot(3,2,[1 3 5])
+
 plotHemisphere
 hold on
 plotTrajectory
 plotBFC
 plotPolarUnitVecs
+plotWaypoints(p.waypoints,p.initPositionGFS(1),gca);
 % plotAxes
 xlim([0 2*r])
 ylim([-r r])
-zlim([0 2*r])
+zlim([0 r])
 axis square
+axis fill
 view([75 30])
 xlabel('x, [m]')
 ylabel('y, [m]')
 zlabel('z, [m]')
 legend([h.trajectory h.BFCinit h.BFCFinal h.unitVecsInit h.unitVecsFinal],{'Path','BFC Init','BFC Final','Unit Vecs Init','Unit Vecs Final'})
-
-subplot(3,2,2)
-plot(tsc.alphaWing.time,(180/pi)*tsc.alphaWing.data)
-xlabel('time, [s]')
-ylabel('alpha, [deg]')
-title('Wing Angle of Attack')
-
-subplot(3,2,4)
-plot(tsc.alphaRudder.time,(180/pi)*tsc.alphaRudder.data)
-xlabel('time, [s]')
-ylabel('alpha, [deg]')
-title('Rudder Angle of Attack')
-
-subplot(3,2,6)
-plot(tsc.omega)
 
 figure
 subplot(3,2,1)

@@ -25,5 +25,16 @@ end
 aeroTable.alpha = data(:,1)*(pi/180);
 aeroTable.cl = data(:,2);
 aeroTable.cd = data(:,3);
+idx=1:length(aeroTable.alpha);
+pl=polyfit(aeroTable.alpha(idx(aeroTable.cl==min(aeroTable.cl)):idx(aeroTable.cl==max(aeroTable.cl))),...
+    aeroTable.cl(idx(aeroTable.cl==min(aeroTable.cl)):idx(aeroTable.cl==max(aeroTable.cl))),1);
+aeroTable.kl1=pl(1);
+aeroTable.kl0=pl(2);
+
+pd = polyfit(aeroTable.alpha,aeroTable.cd,2);
+aeroTable.kd2=pd(1);
+aeroTable.kd1=pd(2);
+aeroTable.kd0=pd(3);
+
 
 end
