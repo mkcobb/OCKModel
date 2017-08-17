@@ -7,7 +7,7 @@ if ~isempty(logsout)
         ts = get(logsout,signalNames{ii});
         if ismethod(ts,'numElements')
             if ts.numElements>1
-                fprintf('\nError: non-unique signal names: %s\n\n',signalNames{ii})
+                fprintf('\nError: non-unique signal name: %s\n\n',signalNames{ii})
                 return
             end
         end

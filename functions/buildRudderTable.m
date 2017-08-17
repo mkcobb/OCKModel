@@ -22,7 +22,7 @@ else
     end
 end
 
-aeroTable.beta = data(:,1)*(pi/180);
+aeroTable.alpha = data(:,1)*(pi/180);
 aeroTable.cl = data(:,2);
 aeroTable.cd = data(:,3);
 
