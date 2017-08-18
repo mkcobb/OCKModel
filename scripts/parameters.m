@@ -19,6 +19,7 @@ p.mass      = 75; % Mass
 p.momentArm = 1;  % Length of moment arm from for rudder
 
 % Aerodynamic
+p.oswaldEfficiency = 0.8;
 p.refLengthWing = 1; % Chord length of airfoil
 p.wingSpan = 5;
 p.refLengthRudder = 0.75;
@@ -49,9 +50,12 @@ p.initVelocityGFS(3) = (p.initVelocity*sin(-p.initTwist))/(p.initPositionGFS(1))
 % Waypoints
 p.waypoints = generateWaypoints(p.num,p.height,p.width,p.elev);
 
+% Aspect Ratio
+p.AR = p.wingSpan/p.refLengthWing;
 
-
-
+% Build Aerodynamic Tables
+wingTable   = buildAirfoilTable(p,'wing');
+rudderTable = buildAirfoilTable(p,'rudder');
 
 
 

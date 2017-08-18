@@ -8,6 +8,5 @@ cd(workingDir(1:startIndex-2))
 addpath(genpath(pwd));
 clearvars -except modelName
 
-wingTable   = buildAirfoilTable();
-rudderTable = buildRudderTable();
 parameters
+
