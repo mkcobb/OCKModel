@@ -24,9 +24,9 @@ else
 end
 
 aeroTable.alpha = data(:,1)*(pi/180);
-aeroTable.cl = data(:,2);
-aeroTable.cl0=0;
-aeroTable.cd = min(data(:,3))+((aeroTable.cl-aeroTable.cl0).^2)./(pi*p.oswaldEfficiency*p.AR);
+aeroTable.cl  = data(:,2);
+aeroTable.cl0 =aeroTable.cl(data(:,3)==min(data(:,3)));
+aeroTable.cd  = min(data(:,3))+((aeroTable.cl-aeroTable.cl0).^2)./(pi*p.oswaldEfficiency*p.AR);
 
 if strcmpi(wingRudder,'wing')
     idx=1:length(aeroTable.alpha);
