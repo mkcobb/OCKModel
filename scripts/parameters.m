@@ -2,7 +2,7 @@
 % Controller
 p.kr1=1;
 p.kr2=1;
-p.tauR = 0.01;
+p.tauR = 0.05;
 
 % Waypoints
 p.height = 20;
@@ -20,7 +20,7 @@ p.rHatOverride = 1;
 p.gravityOnOff = 0;
 
 % Simulation Time
-p.T = 7;
+p.T = 30;
 
 % Lifting Body
 p.mass      = 75; % Mass

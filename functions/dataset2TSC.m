@@ -11,13 +11,6 @@ if ~isempty(logsout)
                 return
             end
         end
-%         if length(ts.Values.data)~=length(tsc.Time) &&...
-%                 length(tsc.Time)~=0
-%             ts.Values = resample(ts.Values,tsc.Time);
-
-%         end
-if strcmpi(ts.Values.Name,'roll')
-end
         tsc = addts(tsc,ts.Values);
     end
     
