@@ -1,4 +1,9 @@
 %% Independent Parameters
+% Controller
+p.kr1=1;
+p.kr2=1;
+p.tauR = 0.01;
+
 % Waypoints
 p.height = 20;
 p.width  = 90;
@@ -28,7 +33,7 @@ p.wingSpan = 5;
 p.refLengthRudder = 0.75;
 p.rudderSpan = 1;
 
-% Environmental
+% Environmental1/
 p.rho       = 1.225; % density of air kg/m^3
 p.viscosity = 1.4207E-5; % Kinematic viscosity of air
 p.g         = 9.80665; % Acceleration due to gravity
@@ -38,7 +43,6 @@ p.initPositionGFS  = [100 0  (45*pi/180)]; % Initial position in spherical coord
 p.initVelocity  = 10; % Initial straight line speed (BFX direction)
 p.initTwist     = 0*(pi/180); % Initial twist angle
 p.initOmega     = 0; % Initial twist rate
-
 
 %% Dependent parameters
 p.refAreaWing     = p.refLengthWing*p.wingSpan; % Reference area of wing

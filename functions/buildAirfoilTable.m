@@ -24,9 +24,9 @@ else
 end
 
 aeroTable.alpha = data(:,1)*(pi/180);
-aeroTable.cl  = data(:,2);
-aeroTable.cl0 =aeroTable.cl(data(:,3)==min(data(:,3)));
-aeroTable.cd  = min(data(:,3))+((aeroTable.cl-aeroTable.cl0).^2)./(pi*p.oswaldEfficiency*p.AR);
+aeroTable.cl    = data(:,2);
+aeroTable.cl0   = aeroTable.cl(data(:,3)==min(data(:,3)));
+aeroTable.cd    = min(data(:,3))+((aeroTable.cl-aeroTable.cl0).^2)./(pi*p.oswaldEfficiency*p.AR);
 
 if strcmpi(wingRudder,'wing')
     idx=1:length(aeroTable.alpha);
@@ -41,7 +41,16 @@ if strcmpi(wingRudder,'wing')
     aeroTable.kd0=pd(3);
 end
 if strcmpi(wingRudder,'rudder')
-    % PLACE CURVE FITTING CODE FOR RUDDER HERE
+    idx=1:length(aeroTable.alpha);
+    pl=polyfit(aeroTable.alpha(idx(aeroTable.cl==min(aeroTable.cl)):idx(aeroTable.cl==max(aeroTable.cl))),...
+        aeroTable.cl(idx(aeroTable.cl==min(aeroTable.cl)):idx(aeroTable.cl==max(aeroTable.cl))),1);
+    aeroTable.kl1=pl(1);
+    aeroTable.kl0=pl(2);
+    
+    pd = polyfit(aeroTable.alpha,aeroTable.cd,2);
+    aeroTable.kd2=pd(1);
+    aeroTable.kd1=pd(2);
+    aeroTable.kd0=pd(3);
 end
 
 
