@@ -28,16 +28,16 @@ subplot(3,2,3)
 plot(tsc.MzBFC)
 
 subplot(3,2,5)
-plot(tsc.twist)
+plot(tsc.psi)
 
 subplot(3,2,2)
-plot(tsc.roll)
+plot(tsc.rollDeg)
 
 subplot(3,2,4)
-plot(tsc.pitch)
+plot(tsc.pitchDeg)
 
 subplot(3,2,6)
-plot(tsc.yaw)
+plot(tsc.yawDeg)
 
 figure
 subplot(3,1,1)
