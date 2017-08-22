@@ -5,12 +5,12 @@ p.kr2=1;
 p.tauR = 0.05;
 
 % Waypoints
-p.height = 20;
+p.height = 10;
 p.width  = 90;
 p.num    = 40;
 p.elev   = 45;
-p.waypointThetaTol = 1*(pi/180);
-p.waypointPhiTol   = 1*(pi/180);
+p.waypointThetaTol = 0.5*(pi/180);
+p.waypointPhiTol   = 0.5*(pi/180);
 p.wrapTolerance    = pi;
 
 % rHat Override
@@ -24,7 +24,7 @@ p.T = 30;
 
 % Lifting Body
 p.mass      = 75; % Mass
-p.momentArm = 1;  % Length of moment arm from for rudder
+p.momentArm = 2;  % Length of moment arm from for rudder
 
 % Aerodynamic Parameters
 p.oswaldEfficiency = 0.8;
