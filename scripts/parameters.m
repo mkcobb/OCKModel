@@ -10,7 +10,7 @@ p.width  = 90;
 p.num    = 40;
 p.elev   = 45;
 p.waypointThetaTol = 0.5*(pi/180);
-p.waypointPhiTol   = 0.5*(pi/180);
+p.waypointPhiTol   = p.waypointThetaTol;
 p.wrapTolerance    = pi;
 
 % rHat Override
