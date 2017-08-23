@@ -1,11 +1,11 @@
 %% Independent Parameters
 % Controller
-p.kr1=1;
-p.kr2=1;
+p.kr1=100;
+p.kr2=100;
 p.tauR = 0.05;
 
 % Waypoints
-p.height = 10;
+p.height = 20;
 p.width  = 90;
 p.num    = 40;
 p.elev   = 45;
@@ -43,6 +43,16 @@ p.initPositionGFS  = [100 0  (45*pi/180)]; % Initial position in spherical coord
 p.initVelocity  = 10; % Initial straight line speed (BFX direction)
 p.initTwist     = 0*(pi/180); % Initial twist angle
 p.initOmega     = 0; % Initial twist rate
+
+% Airfoil lift/drag coefficient fitting limits
+p.wingClStartAlpha = -0.1;
+p.wingClEndAlpha   = 0.1;
+p.wingCdStartAlpha = -0.1;
+p.wingCdEndAlpha   = 0.1;
+p.rudderClStartAlpha = -0.1;
+p.rudderClEndAlpha   = 0.1;
+p.rudderCdStartAlpha = -0.1;
+p.rudderCdEndAlpha   = 0.1;
 
 %% Dependent parameters
 p.refAreaWing     = p.refLengthWing*p.wingSpan; % Reference area of wing

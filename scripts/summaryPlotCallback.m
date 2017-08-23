@@ -65,10 +65,13 @@ legend([h.trajectory h.BFCinit h.BFCFinal h.unitVecsInit h.unitVecsFinal],{'Path
 % 
 figure
 subplot(2,1,1)
-plot(tsc.rawHeadingSetpointRad)
+plot(tsc.headingSetpointRad)
 hold on
-plot(tsc.unwrappedHeadingSetpointRad)
+plot(tsc.psiSP)
 plot(tsc.psi)
+line(get(gca,'XLim'),pi*[1 1])
+line(get(gca,'XLim'),-pi*[1 1])
+
 
 subplot(2,1,2)
 plot(tsc.thetaErrorDeg)

@@ -30,27 +30,71 @@ aeroTable.cd    = min(data(:,3))+((aeroTable.cl-aeroTable.cl0).^2)./(pi*p.oswald
 
 if strcmpi(wingRudder,'wing')
     idx=1:length(aeroTable.alpha);
-    pl=polyfit(aeroTable.alpha(idx(aeroTable.cl==min(aeroTable.cl)):idx(aeroTable.cl==max(aeroTable.cl))),...
-        aeroTable.cl(idx(aeroTable.cl==min(aeroTable.cl)):idx(aeroTable.cl==max(aeroTable.cl))),1);
+    alphaClCrop = aeroTable.alpha(idx(abs(p.wingClStartAlpha-aeroTable.alpha)==min(abs(p.wingClStartAlpha-aeroTable.alpha))):...
+        idx(abs(p.wingClEndAlpha-aeroTable.alpha)==min(abs(p.wingClEndAlpha-aeroTable.alpha)))); 
+    clCrop    = aeroTable.cl(idx(abs(p.wingClStartAlpha-aeroTable.alpha)==min(abs(p.wingClStartAlpha-aeroTable.alpha))):...
+        idx(abs(p.wingClEndAlpha-aeroTable.alpha)==min(abs(p.wingClEndAlpha-aeroTable.alpha)))); 
+    alphaCdCrop = aeroTable.alpha(idx(abs(p.wingCdStartAlpha-aeroTable.alpha)==min(abs(p.wingCdStartAlpha-aeroTable.alpha))):...
+        idx(abs(p.wingCdEndAlpha-aeroTable.alpha)==min(abs(p.wingCdEndAlpha-aeroTable.alpha)))); 
+    cdCrop    = aeroTable.cd(idx(abs(p.wingCdStartAlpha-aeroTable.alpha)==min(abs(p.wingCdStartAlpha-aeroTable.alpha))):...
+        idx(abs(p.wingCdEndAlpha-aeroTable.alpha)==min(abs(p.wingCdEndAlpha-aeroTable.alpha)))); 
+
+    
+    pl=polyfit(alphaClCrop,clCrop,1);
     aeroTable.kl1=pl(1);
     aeroTable.kl0=pl(2);
     
-    pd = polyfit(aeroTable.alpha,aeroTable.cd,2);
+    pd = polyfit(alphaCdCrop,cdCrop,2);
     aeroTable.kd2=pd(1);
     aeroTable.kd1=pd(2);
     aeroTable.kd0=pd(3);
+    
+%     % Plot  Cl and Cd to check
+%     figure
+%     subplot(2,1,1)
+%     plot(aeroTable.alpha , aeroTable.cl)
+%     hold on
+%     plot(aeroTable.alpha , pl(1).*aeroTable.alpha + pl(2))
+%     title('Cl Vs Alpha')
+%     subplot(2,1,2)
+%     plot(aeroTable.alpha , aeroTable.cd)
+%     hold on
+%     plot(aeroTable.alpha , pd(1).*aeroTable.alpha.^2 + pd(2)*aeroTable.alpha + pd(3))
+%     title('Cd Vs Alpha')
 end
 if strcmpi(wingRudder,'rudder')
     idx=1:length(aeroTable.alpha);
-    pl=polyfit(aeroTable.alpha(idx(aeroTable.cl==min(aeroTable.cl)):idx(aeroTable.cl==max(aeroTable.cl))),...
-        aeroTable.cl(idx(aeroTable.cl==min(aeroTable.cl)):idx(aeroTable.cl==max(aeroTable.cl))),1);
+    alphaClCrop = aeroTable.alpha(idx(abs(p.rudderClStartAlpha-aeroTable.alpha)==min(abs(p.rudderClStartAlpha-aeroTable.alpha))):...
+        idx(abs(p.rudderClEndAlpha-aeroTable.alpha)==min(abs(p.rudderClEndAlpha-aeroTable.alpha)))); 
+    clCrop    = aeroTable.cl(idx(abs(p.rudderClStartAlpha-aeroTable.alpha)==min(abs(p.rudderClStartAlpha-aeroTable.alpha))):...
+        idx(abs(p.rudderClEndAlpha-aeroTable.alpha)==min(abs(p.rudderClEndAlpha-aeroTable.alpha)))); 
+    alphaCdCrop = aeroTable.alpha(idx(abs(p.rudderCdStartAlpha-aeroTable.alpha)==min(abs(p.rudderCdStartAlpha-aeroTable.alpha))):...
+        idx(abs(p.rudderCdEndAlpha-aeroTable.alpha)==min(abs(p.rudderCdEndAlpha-aeroTable.alpha)))); 
+    cdCrop    = aeroTable.cd(idx(abs(p.rudderCdStartAlpha-aeroTable.alpha)==min(abs(p.rudderCdStartAlpha-aeroTable.alpha))):...
+        idx(abs(p.rudderCdEndAlpha-aeroTable.alpha)==min(abs(p.rudderCdEndAlpha-aeroTable.alpha)))); 
+
+    
+    pl=polyfit(alphaClCrop,clCrop,1);
     aeroTable.kl1=pl(1);
     aeroTable.kl0=pl(2);
     
-    pd = polyfit(aeroTable.alpha,aeroTable.cd,2);
+    pd = polyfit(alphaCdCrop,cdCrop,2);
     aeroTable.kd2=pd(1);
     aeroTable.kd1=pd(2);
     aeroTable.kd0=pd(3);
+    
+%     % Plot  Cl and Cd to check
+%     figure
+%     subplot(2,1,1)
+%     plot(aeroTable.alpha , aeroTable.cl)
+%     hold on
+%     plot(aeroTable.alpha , pl(1).*aeroTable.alpha + pl(2))
+%     title('Cl Vs Alpha')
+%     subplot(2,1,2)
+%     plot(aeroTable.alpha , aeroTable.cd)
+%     hold on
+%     plot(aeroTable.alpha , pd(1).*aeroTable.alpha.^2 + pd(2)*aeroTable.alpha + pd(3))
+%     title('Cd Vs Alpha')
 end
 
 
