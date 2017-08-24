@@ -1,48 +1,56 @@
 %% Independent Parameters
+% Plotting Parameters
+p.quietMode = 0;
+p.waypointsOnOff = 1;
+
 % Controller
-p.kr1=100;
-p.kr2=100;
+p.kr1  = 50;
+p.kr2  = 50;
 p.tauR = 0.05;
 
 % Waypoints
-p.height = 20;
-p.width  = 90;
+p.height = 15.1111;
+p.width  = 164.4152;
 p.num    = 40;
 p.elev   = 45;
 p.waypointThetaTol = 0.5*(pi/180);
-p.waypointPhiTol   = p.waypointThetaTol;
 p.wrapTolerance    = pi;
+p.trackingErrorWeight = 3000;
 
 % rHat Override
 % 0: allow distance from origin to vary
 % 1: hold lifting body to surface of the sphere
 p.rHatOverride = 1;
-p.gravityOnOff = 0;
+p.gravityOnOff = 1;
 
 % Simulation Time
-p.T = 30;
+p.T = inf;
 
 % Lifting Body
 p.mass      = 75; % Mass
-p.momentArm = 2;  % Length of moment arm from for rudder
+p.momentArm = 80;  % Length of moment arm from for rudder
 
 % Aerodynamic Parameters
-p.oswaldEfficiency = 0.8;
-p.refLengthWing = 1; % Chord length of airfoil
-p.wingSpan = 5;
-p.refLengthRudder = 0.75;
-p.rudderSpan = 1;
+p.oswaldEfficiency  = 0.8;
+p.refLengthWing     = 1; % Chord length of airfoil
+p.wingSpan          = 5;
+p.refLengthRudder   = 1.5;
+p.rudderSpan        = 4;
 
-% Environmental1/
+% Environmental
 p.rho       = 1.225; % density of air kg/m^3
 p.viscosity = 1.4207E-5; % Kinematic viscosity of air
 p.g         = 9.80665; % Acceleration due to gravity
 
 % Initial Conditions
-p.initPositionGFS  = [100 0  (45*pi/180)]; % Initial position in spherical coordinates
-p.initVelocity  = 10; % Initial straight line speed (BFX direction)
-p.initTwist     = 0*(pi/180); % Initial twist angle
-p.initOmega     = 0; % Initial twist rate
+p.initPositionGFS   = [100 0  (45*pi/180)]; % Initial position in spherical coordinates
+p.initVelocity      = 10; % Initial straight line speed (BFX direction)
+p.initTwist         = 0*(pi/180); % Initial twist angle
+p.initOmega         = 0; % Initial twist rate
+
+% Actuator Rate Limiters
+p.wingRateLimit = 20; % degrees/sec
+p.rudderRateLimit = 20; % degrees/sec
 
 % Airfoil lift/drag coefficient fitting limits
 p.wingClStartAlpha = -0.1;
@@ -67,6 +75,7 @@ p.initVelocityGFS(3) = (p.initVelocity*sin(-p.initTwist))/(p.initPositionGFS(1))
 
 % Waypoints
 p.waypoints = generateWaypoints(p.num,p.height,p.width,p.elev);
+p.waypointPhiTol   = p.waypointThetaTol;
 
 % Aspect Ratio
 p.AR = p.wingSpan/p.refLengthWing;
@@ -75,6 +84,14 @@ p.AR = p.wingSpan/p.refLengthWing;
 wingTable   = buildAirfoilTable(p,'wing');
 rudderTable = buildAirfoilTable(p,'rudder');
 
+% Empty arraysfor storing things when we run loops
+p.widthsVec = [];
+p.heightsVec= [];
+p.performanceIndex = [];
+p.errorIndex = [];
+p.errorName = {};
+p.meanEnergy =[];
+p.tsc={};
 
 
 

@@ -1,12 +1,15 @@
 clc
 close all
-clear all
+
+% Check to see that we're in the right directory
 modelName = 'CDCJournalModel';
 workingDir = which([modelName,'.slx']);
 startIndex = regexp(workingDir,[modelName,'.slx']);
-cd(workingDir(1:startIndex-2))
-addpath(genpath(pwd));
-clearvars -except modelName
+fullDirPath = workingDir(1:startIndex-2);
+if ~strcmp(pwd,fullDirPath) % If not then change it
+    cd(fullDirPath)
+end
+clear
 
 parameters
 

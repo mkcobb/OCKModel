@@ -2,7 +2,7 @@
 initPositionGFC = tsc.positionGFC.data(1,:);
 
 initVelocityGFC = tsc.velocityGFC.data(1,:);
-initVWindAppGFC = tsc.vWindAppGFC.data(1,:);
+initVAppWindGFC = tsc.vAppWindGFC.data(1,:);
 initVWindGFC    = tsc.vWindGFC.data(1,:);
 
 initvAppWindBFC = tsc.vAppWindBFC.data(1,:);
@@ -34,9 +34,9 @@ plot3([0 bfz(1)],[0 bfz(2)],[0 bfz(3)],'Color','m')
 % Plot vectors 
 plot3([0,initVWindGFC(1)   ],[0,initVWindGFC(2)   ],[0,initVWindGFC(3)   ],'Color','b')
 plot3([0,initVelocityGFC(1)],[0,initVelocityGFC(2)],[0,initVelocityGFC(3)],'Color','r')
-plot3([initVelocityGFC(1),initVelocityGFC(1)+initVWindAppGFC(1)],...
-      [initVelocityGFC(2),initVelocityGFC(2)+initVWindAppGFC(2)],...
-      [initVelocityGFC(3),initVelocityGFC(3)+initVWindAppGFC(3)],'Color','g');
+plot3([initVelocityGFC(1),initVelocityGFC(1)+initVAppWindGFC(1)],...
+      [initVelocityGFC(2),initVelocityGFC(2)+initVAppWindGFC(2)],...
+      [initVelocityGFC(3),initVelocityGFC(3)+initVAppWindGFC(3)],'Color','g');
 
 view([75 30])
 axis equal

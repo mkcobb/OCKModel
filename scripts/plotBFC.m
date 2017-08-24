@@ -1,5 +1,5 @@
 % plot BFX
-L=r/5; % Length scale of unit vectors
+L=p.initPositionGFS(1)/5; % Length scale of unit vectors
 
 % Plot BFC unit vectors at the beginning of the simulation
 h.BFCXInit = quiver3(tsc.positionGFC.data(1,1),tsc.positionGFC.data(1,2),tsc.positionGFC.data(1,3)   ,L*tsc.BFX_GFC.data(1,1)            ,L*tsc.BFX_GFC.data(1,2),L*tsc.BFX_GFC.data(1,3),'Color','m');
