@@ -1,5 +1,7 @@
 close all
 
+
+
 %% Path Summary
 figure
 plotHemisphere
@@ -8,7 +10,11 @@ plotTrajectory
 plotBFC
 plotPolarUnitVecs
 [h.points,h.waypointBounds] = plotWaypoints(p,gca);
-xlim([0 2*p.initPositionGFS(1)])
+if abs(p.width)>90
+    xlim(p.initPositionGFS(1)*[-1 1])
+else
+    xlim([0 2*p.initPositionGFS(1)])
+end
 ylim(p.initPositionGFS(1)*[-1 1])
 zlim([0 p.initPositionGFS(1)])
 axis square

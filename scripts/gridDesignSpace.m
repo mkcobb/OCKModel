@@ -11,12 +11,12 @@ parameters
 p.quietMode = 1;
 
 p.thetaStart = 10;
-p.thetaEnd   = 300;
-p.nTheta     = 10;
+p.thetaEnd   = 180;
+p.nTheta     = 20;
 
 p.phiStart   = 1;
-p.phiEnd     = 15;
-p.nPhi       = 10;
+p.phiEnd     = 12;
+p.nPhi       = 11;
 
 p.thetaVec = linspace(p.thetaStart,p.thetaEnd,p.nTheta);
 p.phiVec   = linspace(p.phiStart,p.phiEnd,p.nPhi);
@@ -30,7 +30,7 @@ for ii = 1:length(p.thetaVec)
         p.waypoints = generateWaypoints(p.num,p.heightsVec(end),p.widthsVec(end),p.elev);
         sim('CDCJournalModel')
         [p.performanceIndex(end+1),p.errorName{end+1},p.errorIndex(end+1)] = calculatePerformanceIndex(p,tsc);
-        p.tsc{end+1}=tsc;
+%         p.tsc{end+1}=tsc;
         waitbar(length(p.widthsVec)/(length(p.thetaVec)*length(p.phiVec)),w,'Progress');
         
     end

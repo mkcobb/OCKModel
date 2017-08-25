@@ -9,8 +9,8 @@ p.kr2  = 50;
 p.tauR = 0.05;
 
 % Waypoints
-p.height = 15.1111;
-p.width  = 164.4152;
+p.height = 10;
+p.width  = 160;
 p.num    = 40;
 p.elev   = 45;
 p.waypointThetaTol = 0.5*(pi/180);
@@ -49,8 +49,8 @@ p.initTwist         = 0*(pi/180); % Initial twist angle
 p.initOmega         = 0; % Initial twist rate
 
 % Actuator Rate Limiters
-p.wingRateLimit = 20; % degrees/sec
-p.rudderRateLimit = 20; % degrees/sec
+p.wingAngleRateLimit = 360; % degrees/sec
+p.rudderAngleRateLimit = 360; % degrees/sec
 
 % Airfoil lift/drag coefficient fitting limits
 p.wingClStartAlpha = -0.1;
