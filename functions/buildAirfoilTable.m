@@ -1,4 +1,8 @@
 function aeroTable =  buildAirfoilTable(p,wingRudder)
+if ~strcmp(pwd,p.modelPath)
+    cd(fileparts(p.modelPath));
+end
+
 wingRudder = lower(wingRudder);
 files = dir(fullfile(pwd,wingRudder));
 if ispc

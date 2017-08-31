@@ -1,7 +1,19 @@
 %% Independent Parameters
+
+% Text output parameters
+p.verbose = 1;
+
 % Plotting Parameters
-p.quietMode = 0;
+p.quietMode = 1;
 p.waypointsOnOff = 1;
+
+% RLS Settings
+p.forgettingFactor = 0.99;
+p.thetaDistanceLim = 3;
+p.phiDistanceLim = 0.5;
+
+% Optimization Settings
+p.convergenceLim = 5;
 
 % Controller
 p.kr1  = 50;
@@ -80,18 +92,42 @@ p.waypointPhiTol   = p.waypointThetaTol;
 % Aspect Ratio
 p.AR = p.wingSpan/p.refLengthWing;
 
+% Simulink model path
+p.modelPath = which('CDCJournalModel.slx');
+
 % Build Aerodynamic Tables
 wingTable   = buildAirfoilTable(p,'wing');
 rudderTable = buildAirfoilTable(p,'rudder');
 
-% Empty arraysfor storing things when we run loops
+% Empty arraysfor storing things when we run loops, not used in all scripts
 p.widthsVec = [];
 p.heightsVec= [];
+
 p.performanceIndex = [];
 p.errorIndex = [];
 p.errorName = {};
+
+p.performanceIndexInit=[];
+p.errorIndexInit = [];
+p.errorNameInit = {};
+
+
+p.performanceIndexOpt=[];
+p.errorIndexOpt = [];
+p.errorNameOpt = {};
+
+
 p.meanEnergy =[];
 p.tsc={};
+p.phiInit = [];
+p.thetaInit = [];
+
+p.XInit=[];
+p.xOpt={};
+p.Beta={};
+p.V={};
+
+
 
 
 

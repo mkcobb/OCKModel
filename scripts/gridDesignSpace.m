@@ -25,12 +25,9 @@ p.phiVec   = linspace(p.phiStart,p.phiEnd,p.nPhi);
 w=waitbar(0,'Starting simulation.');
 for ii = 1:length(p.thetaVec)
     for jj = 1:length(p.phiVec)
-        p.widthsVec(end+1) = p.thetaVec(ii);
-        p.heightsVec(end+1) = p.phiVec(jj);
         p.waypoints = generateWaypoints(p.num,p.heightsVec(end),p.widthsVec(end),p.elev);
         sim('CDCJournalModel')
         [p.performanceIndex(end+1),p.errorName{end+1},p.errorIndex(end+1)] = calculatePerformanceIndex(p,tsc);
-%         p.tsc{end+1}=tsc;
         waitbar(length(p.widthsVec)/(length(p.thetaVec)*length(p.phiVec)),w,'Progress');
         
     end
