@@ -9,11 +9,11 @@ p.waypointsOnOff = 1;
 
 % RLS Settings
 p.forgettingFactor = 0.99;
-p.thetaDistanceLim = 3;
-p.phiDistanceLim = 0.5;
+p.thetaDistanceLim = 5;
+p.phiDistanceLim = 0.25;
 
 % Optimization Settings
-p.convergenceLim = 5;
+p.convergenceLim = 20;
 
 % Controller
 p.kr1  = 50;
@@ -37,10 +37,11 @@ p.gravityOnOff = 1;
 
 % Simulation Time
 p.T = inf;
+p.Ts = 0.001; % Sample time
 
 % Lifting Body
 p.mass      = 75; % Mass
-p.momentArm = 80;  % Length of moment arm from for rudder
+p.momentArm = 80;  % Length of moment arm for rudder
 
 % Aerodynamic Parameters
 p.oswaldEfficiency  = 0.8;
@@ -53,6 +54,9 @@ p.rudderSpan        = 4;
 p.rho       = 1.225; % density of air kg/m^3
 p.viscosity = 1.4207E-5; % Kinematic viscosity of air
 p.g         = 9.80665; % Acceleration due to gravity
+
+% Wind Conditions
+p.vWind = 3;
 
 % Initial Conditions
 p.initPositionGFS   = [100 0  (45*pi/180)]; % Initial position in spherical coordinates
@@ -126,6 +130,9 @@ p.XInit=[];
 p.xOpt={};
 p.Beta={};
 p.V={};
+
+p.gradientPhi=[];
+p.gradientTheta=[];
 
 
 

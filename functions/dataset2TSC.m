@@ -11,7 +11,18 @@ if ~isempty(logsout)
                 return
             end
         end
-        tsc = addts(tsc,ts.Values);
+        try
+            % If the signal is a constant, the time vector wil only be one
+            % element long.  Patch to fix that.
+            if length(ts.Values.Time)<2
+               ts.Values = timeseries(...
+                   ts.Values.data(1)*ones(size(tsc.time)),...
+                   tsc.time,'Name',signalNames{ii}) ;
+            end
+            tsc = addts(tsc,ts.Values);
+        catch 
+            sprintf('')
+        end
     end
     
 end
