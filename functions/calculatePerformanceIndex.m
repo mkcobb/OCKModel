@@ -1,10 +1,12 @@
-function [J,errorName,errorIndex]=calculatePerformanceIndex(p,tsc)
+function [J,meanEnergy,errorName,errorIndex]=calculatePerformanceIndex(p,tsc)
 % For some kind of nonsensical mechanical circumstance
 if any(tsc.faultIndicatorPlant.data) || any(tsc.faultIndicatorController.data)
     J = 0;
+    meanEnergy = 0;
     faultSigNames = tsc.gettimeseriesnames;
     faultSigNames = faultSigNames(contains(faultSigNames,'fault'));
     faultSigNames = faultSigNames(~contains(faultSigNames,'Indicator'));
+    
     
     for ii = 1:length(faultSigNames)
         trueFalse = eval(sprintf('tsc.%s.data(end)',faultSigNames{ii}));
@@ -13,6 +15,10 @@ if any(tsc.faultIndicatorPlant.data) || any(tsc.faultIndicatorController.data)
             errorName = faultSigNames{ii};
             break
         end
+    end
+    if evalin('base','p.verbose')
+        fprintf('\nFault detected:\n')
+        readoutFaults
     end
 else
     % Error vector indicates type of fault with sim

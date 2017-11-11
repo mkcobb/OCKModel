@@ -13,7 +13,7 @@ if isunix && ~strcmpi(filePath(1),filesep)
     filePath = [filesep filePath];
 end
 cd(filePath)
-
+addpath(genpath(pwd))
 % Run/Load parameters
 parameters;
 
@@ -31,8 +31,8 @@ end
 load_system(p.modelPath)
 
 % Initial Condition
-p.phiIC   = 7;
-p.thetaIC = 150;
+p.phiIC   = 6;
+p.thetaIC = 120;
 
 % Initial fit point distances
 p.phiInitSep   = 0.25;
@@ -65,8 +65,9 @@ for ii = 1:length(p.performanceIndexInit)
     % Run the simulation
     sim('CDCJournalModel')
     % Calculate the performance index
-    [p.performanceIndexInit(ii),p.errorNameInit{ii},p.errorIndexInit(ii)] ...
+    [p.performanceIndexInit(ii),p.meanEnergyInit(ii),p.errorNameInit{ii},p.errorIndexInit(ii)] ...
         = calculatePerformanceIndex(p,tsc);
+    [p.meanPARInit(ii),tsc] = calculatePowerAugmentationRatio(tsc);
     % Save the first result as the first element of tscc
     if ii == 1
         tscc{1}=tsc;
@@ -104,8 +105,10 @@ while stopCondition(p)
     % Run the simulation
     sim('CDCJournalModel')
     % Calculate the performance index
-    [p.performanceIndexOpt(p.optIdx),p.errorNameOpt{p.optIdx},p.errorIndexOpt(p.optIdx)] ...
+    [p.performanceIndexOpt(p.optIdx),p.meanEnergyOpt(p.optIdx),...
+        p.errorNameOpt{p.optIdx},p.errorIndexOpt(p.optIdx)] ...
         = calculatePerformanceIndex(p,tsc);
+    [p.meanPAROpt(p.optIdx),tsc] = calculatePowerAugmentationRatio(tsc);
     % Check to see that the the last simulation didn't fail
     if any(p.errorIndexOpt) % If it did, exit
         if evalin('base','p.verbose')

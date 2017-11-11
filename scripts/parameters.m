@@ -13,7 +13,7 @@ p.thetaDistanceLim = 5;
 p.phiDistanceLim = 0.25;
 
 % Optimization Settings
-p.convergenceLim = 20;
+p.convergenceLim = 30;
 
 % Controller
 p.kr1  = 50;
@@ -60,7 +60,7 @@ p.vWind = 3;
 
 % Initial Conditions
 p.initPositionGFS   = [100 0  (45*pi/180)]; % Initial position in spherical coordinates
-p.initVelocity      = 10; % Initial straight line speed (BFX direction)
+p.initVelocity      = 15; % Initial straight line speed (BFX direction)
 p.initTwist         = 0*(pi/180); % Initial twist angle
 p.initOmega         = 0; % Initial twist rate
 
@@ -103,6 +103,10 @@ p.modelPath = which('CDCJournalModel.slx');
 wingTable   = buildAirfoilTable(p,'wing');
 rudderTable = buildAirfoilTable(p,'rudder');
 
+% Useable power for this design
+% https://en.wikipedia.org/wiki/Crosswind_kite_power
+p.useablePower = (2/27)*p.rho*p.refAreaWing*wingTable.kl1*(max(wingTable.cl./wingTable.cd))^2*p.vWind^3;
+
 % Empty arraysfor storing things when we run loops, not used in all scripts
 p.widthsVec = [];
 p.heightsVec= [];
@@ -111,17 +115,21 @@ p.performanceIndex = [];
 p.errorIndex = [];
 p.errorName = {};
 
+p.meanPARInit=[];
 p.performanceIndexInit=[];
+p.meanEnergyInit =[];
 p.errorIndexInit = [];
 p.errorNameInit = {};
 
-
+p.meanPAROpt=[];
 p.performanceIndexOpt=[];
+p.meanEnergyOpt =[];
 p.errorIndexOpt = [];
 p.errorNameOpt = {};
 
 
-p.meanEnergy =[];
+
+
 p.tsc={};
 p.phiInit = [];
 p.thetaInit = [];
