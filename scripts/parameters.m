@@ -41,7 +41,7 @@ p.Ts = 0.001; % Sample time
 
 % Lifting Body
 p.mass      = 75; % Mass
-p.momentArm = 80;  % Length of moment arm for rudder
+p.momentArm = 7.5;  % Length of moment arm for rudder
 
 % Aerodynamic Parameters
 p.oswaldEfficiency  = 0.8;
