@@ -15,7 +15,7 @@ end
 cd(filePath)
 addpath(genpath(pwd))
 % Run/Load parameters
-parameters;
+parameters; 
 
 % Setting to turn animation saving on/off
 saveAnimation = 1;
@@ -31,8 +31,8 @@ end
 load_system(p.modelPath)
 
 % Initial Condition
-p.phiIC   = 6;
-p.thetaIC = 120;
+p.phiIC   = 7;
+p.thetaIC = 100;
 
 % Initial fit point distances
 p.phiInitSep   = 0.25;

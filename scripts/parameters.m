@@ -8,7 +8,7 @@ p.quietMode = 1;
 p.waypointsOnOff = 1;
 
 % RLS Settings
-p.forgettingFactor = 0.99;
+p.forgettingFactor = 0.8;
 p.thetaDistanceLim = 5;
 p.phiDistanceLim = 0.25;
 
@@ -16,13 +16,13 @@ p.phiDistanceLim = 0.25;
 p.convergenceLim = 30;
 
 % Controller
-p.kr1  = 50;
-p.kr2  = 50;
-p.tauR = 0.05;
+p.kr1  = 100;
+p.kr2  = 100;
+p.tauR = 0.04;  % Ref model time const: 1/(tauR*s+1)^2
 
 % Waypoints
-p.height = 10;
-p.width  = 160;
+p.height = 5;
+p.width  = 100;
 p.num    = 40;
 p.elev   = 45;
 p.waypointThetaTol = 0.5*(pi/180);
@@ -40,8 +40,8 @@ p.T = inf;
 p.Ts = 0.001; % Sample time
 
 % Lifting Body
-p.mass      = 75; % Mass
-p.momentArm = 7.5;  % Length of moment arm for rudder
+p.mass      = 60; % Mass
+p.momentArm = 10;  % Length of moment arm for rudder
 
 % Aerodynamic Parameters
 p.oswaldEfficiency  = 0.8;
@@ -66,7 +66,7 @@ p.initOmega         = 0; % Initial twist rate
 
 % Actuator Rate Limiters
 p.wingAngleRateLimit = 360; % degrees/sec
-p.rudderAngleRateLimit = 360; % degrees/sec
+p.rudderAngleRateLimit = 10*360; % degrees/sec
 
 % Airfoil lift/drag coefficient fitting limits
 p.wingClStartAlpha = -0.1;

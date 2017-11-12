@@ -13,7 +13,7 @@ outfile = fullfile(pwd,'figures','wholeOptmization.gif');
 
 frameRate = 10;
 nColors = 256;
-heatColorMap = [linspace(0,1,nColors);zeros(1,nColors);linspace(1,0,nColors)]';
+heatColorMap = [linspace(0,1,nColors);zeros(1,nColors);zeros(1,nColors)]';
 heatColorMap = [0 0 0;heatColorMap];
 
 
