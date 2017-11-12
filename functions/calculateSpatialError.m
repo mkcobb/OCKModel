@@ -21,7 +21,7 @@ for i = 1:max(tsc.currentWaypointIndex.data)-1
 end
 totalError = weights'*individualErrors;
 if max(tsc.currentWaypointIndex.data)==p.num
-    numberOfWaypointsReached = p.number-1;
+    numberOfWaypointsReached = p.num-1;
 else
     numberOfWaypointsReached = max(tsc.currentWaypointIndex.data);
 end

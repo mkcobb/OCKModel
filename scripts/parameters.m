@@ -9,11 +9,25 @@ p.waypointsOnOff = 1;
 
 % RLS Settings
 p.forgettingFactor = 0.8;
-p.thetaDistanceLim = 5;
-p.phiDistanceLim = 0.25;
+p.azimuthDistanceLim = 5;
+p.zenithDistanceLim = 0.25;
+p.azimuthPerturbationPeriod  = 3;
+p.azimuthPerturbationGain    = 5;
+p.zenithPerturbationPeriod   = 5;
+p.zenithPerturbationGain     = 1;
 
 % Optimization Settings
 p.convergenceLim = 30;
+p.numSettlingLaps = 3;
+p.numInitializationLaps = 5;
+p.numOptimizationLaps = 30;
+% Optimization Initialization Settings
+p.azimuthOffset = 2.5; % degrees
+p.zenithOffset = 0.25; % degrees
+p.azimuthInitializationDirections = [0 1  1 -1 -1];
+p.zenithInitializationDirections  = [0 1 -1  1 -1];
+
+% x={[1:p.numSettlingLaps],[p.numSettlingLaps+1:p.numSettlingLaps+1+p.numInitializationLaps-1],[p.numSettlingLaps+1+p.numInitializationLaps:p.numSettlingLaps+1+p.numInitializationLaps+p.numOptimizationLaps-1]}
 
 % Controller
 p.kr1  = 100;
@@ -21,11 +35,11 @@ p.kr2  = 100;
 p.tauR = 0.04;  % Ref model time const: 1/(tauR*s+1)^2
 
 % Waypoints
-p.height = 5;
+p.height = 7;
 p.width  = 100;
 p.num    = 40;
 p.elev   = 45;
-p.waypointThetaTol = 0.5*(pi/180);
+p.waypointAzimuthTol = 0.5*(pi/180);
 p.wrapTolerance    = pi;
 p.trackingErrorWeight = 3000;
 
@@ -91,7 +105,7 @@ p.initVelocityGFS(3) = (p.initVelocity*sin(-p.initTwist))/(p.initPositionGFS(1))
 
 % Waypoints
 p.waypoints = generateWaypoints(p.num,p.height,p.width,p.elev);
-p.waypointPhiTol   = p.waypointThetaTol;
+p.waypointZenithTol   = p.waypointazimuthTol;
 
 % Aspect Ratio
 p.AR = p.wingSpan/p.refLengthWing;
@@ -131,16 +145,16 @@ p.errorNameOpt = {};
 
 
 p.tsc={};
-p.phiInit = [];
-p.thetaInit = [];
+p.zenithInit = [];
+p.azimuthInit = [];
 
 p.XInit=[];
 p.xOpt={};
 p.Beta={};
 p.V={};
 
-p.gradientPhi=[];
-p.gradientTheta=[];
+p.gradientzenith=[];
+p.gradientazimuth=[];
 
 
 
