@@ -105,7 +105,7 @@ p.initVelocityGFS(3) = (p.initVelocity*sin(-p.initTwist))/(p.initPositionGFS(1))
 
 % Waypoints
 p.waypoints = generateWaypoints(p.num,p.height,p.width,p.elev);
-p.waypointZenithTol   = p.waypointazimuthTol;
+p.waypointZenithTol   = p.waypointAzimuthTol;
 p.waypointAngles = linspace((3/2)*pi,(3/2)*pi+2*pi,p.num+1);
 p.waypointAngles = p.waypointAngles(2:end);
 
