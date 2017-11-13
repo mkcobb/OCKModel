@@ -85,7 +85,7 @@ end
 if evalin('base','p.verbose')
     fprintf('\nPerforming initial surface fit.\n')
 end
-p=nextDesignPoint(p);
+p = nextDesignPoint(p);
 
 
 % Beginning optimization

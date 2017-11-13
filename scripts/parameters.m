@@ -36,7 +36,7 @@ p.tauR = 0.04;  % Ref model time const: 1/(tauR*s+1)^2
 
 % Waypoints
 p.height = 7;
-p.width  = 100;
+p.width  = 60;
 p.num    = 40;
 p.elev   = 45;
 p.waypointAzimuthTol = 0.5*(pi/180);
@@ -106,6 +106,8 @@ p.initVelocityGFS(3) = (p.initVelocity*sin(-p.initTwist))/(p.initPositionGFS(1))
 % Waypoints
 p.waypoints = generateWaypoints(p.num,p.height,p.width,p.elev);
 p.waypointZenithTol   = p.waypointazimuthTol;
+p.waypointAngles = linspace((3/2)*pi,(3/2)*pi+2*pi,p.num+1);
+p.waypointAngles = p.waypointAngles(2:end);
 
 % Aspect Ratio
 p.AR = p.wingSpan/p.refLengthWing;
