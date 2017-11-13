@@ -12,7 +12,7 @@ if ~exist('logsout','var')
 else
     clearvars tsc
     tsc = dataset2TSC(logsout);
-    [p.totalError,p.normalizedError,p.individualErrors] = calculateSpatialError(p,tsc);
+%     [p.totalError,p.normalizedError,p.individualErrors] = calculateSpatialError(p,tsc);
     if ~p.quietMode
         plotSummaries
     end

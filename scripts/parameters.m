@@ -19,13 +19,13 @@ p.zenithPerturbationGain     = 1;
 % Optimization Settings
 p.convergenceLim = 30;
 p.numSettlingLaps = 3;
-p.numInitializationLaps = 5;
 p.numOptimizationLaps = 30;
 % Optimization Initialization Settings
 p.azimuthOffset = 2.5; % degrees
 p.zenithOffset = 0.25; % degrees
-p.azimuthInitializationDirections = [0 1  1 -1 -1];
-p.zenithInitializationDirections  = [0 1 -1  1 -1];
+p.numInitializationLaps = 5; % 5 or 9 point initialization
+p.azimuthInitializationDirections = [0 0  0 1 -1];
+p.zenithInitializationDirections  = [0 1 -1 0  0];
 
 % x={[1:p.numSettlingLaps],[p.numSettlingLaps+1:p.numSettlingLaps+1+p.numInitializationLaps-1],[p.numSettlingLaps+1+p.numInitializationLaps:p.numSettlingLaps+1+p.numInitializationLaps+p.numOptimizationLaps-1]}
 
@@ -50,7 +50,7 @@ p.rHatOverride = 1;
 p.gravityOnOff = 1;
 
 % Simulation Time
-p.T = inf;
+p.T = 10000;
 p.Ts = 0.001; % Sample time
 
 % Lifting Body
@@ -108,7 +108,13 @@ p.waypoints = generateWaypoints(p.num,p.height,p.width,p.elev);
 p.waypointZenithTol   = p.waypointAzimuthTol;
 p.waypointAngles = linspace((3/2)*pi,(3/2)*pi+2*pi,p.num+1);
 p.waypointAngles = p.waypointAngles(2:end);
-
+if p.numInitializationLaps == 5 % 5 point initialization
+    p.azimuthInitializationDirections = [0 0  0 1 -1];
+    p.zenithInitializationDirections  = [0 1 -1 0  0];
+elseif p.numInitializationLaps == 9 % 9 point initializations
+    p.azimuthInitializationDirections = [0 0  0 1 -1 1  1 -1 -1];
+    p.zenithInitializationDirections  = [0 1 -1 0  0 1 -1  1  1];
+end
 % Aspect Ratio
 p.AR = p.wingSpan/p.refLengthWing;
 

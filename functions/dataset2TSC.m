@@ -8,7 +8,7 @@ if ~isempty(logsout)
         if ismethod(ts,'numElements')
             if ts.numElements>1
                 fprintf('\nError: non-unique signal name: %s\n\n',signalNames{ii})
-                return
+%                 break
             end
         end
         try
@@ -21,7 +21,7 @@ if ~isempty(logsout)
             end
             tsc = addts(tsc,ts.Values);
         catch 
-            sprintf('')
+%             sprintf('')
         end
     end
     
