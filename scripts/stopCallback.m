@@ -11,10 +11,31 @@ if ~exist('logsout','var')
     return
 else
     clearvars tsc
-    tsc = dataset2TSC(logsout);
-%     [p.totalError,p.normalizedError,p.individualErrors] = calculateSpatialError(p,tsc);
     if ~p.quietMode
-        plotSummaries
+        fprintf('\nBuilding timeseries from simulation data.\n')
+    end
+    tsc = dataset2TSC(logsout);
+    if ~p.quietMode
+        fprintf('\nExtracting iteration data from timeseries collection.\n')
+    end
+    [iter,tscc] = parseIterations(tsc);
+    if ~p.quietMode
+        if tsc.simulationCompleteFlag.data(end)
+            fprintf('\nSimulation failed:\n')
+            readoutFaults
+        end
+        if tsc.simulationCompleteFlag.data(end)
+            plotOptimization
+        end
+    end
+    
+    if ~p.quietMode
+        fprintf('\nSaving simulation data...')
+    end
+    
+%     save(fullfile(pwd,'data',sprintf('%s.mat',datestr(datetime('now'),'hhMMss_ddmmyyyy'))),'tsc','p','tscc','iter')
+    if ~p.quietMode
+        fprintf('Complete\n')
     end
 end
 

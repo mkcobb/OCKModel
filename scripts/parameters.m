@@ -3,29 +3,18 @@
 % Text output parameters
 p.verbose = 1;
 
+% Simulink animation parameters
+p.animationOnOff = 0;
+
 % Plotting Parameters
-p.quietMode = 1;
-p.waypointsOnOff = 1;
+p.quietMode = 0;
 
 % RLS Settings
-p.forgettingFactor = 0.8;
-p.azimuthDistanceLim = 5;
-p.zenithDistanceLim = 0.25;
+p.forgettingFactor = 0.9;
 p.azimuthPerturbationPeriod  = 3;
-p.azimuthPerturbationGain    = 5;
+p.azimuthPerturbationGain    = 1;
 p.zenithPerturbationPeriod   = 5;
-p.zenithPerturbationGain     = 1;
-
-% Optimization Settings
-p.convergenceLim = 30;
-p.numSettlingLaps = 3;
-p.numOptimizationLaps = 30;
-% Optimization Initialization Settings
-p.azimuthOffset = 2.5; % degrees
-p.zenithOffset = 0.25; % degrees
-p.numInitializationLaps = 5; % 5 or 9 point initialization
-p.azimuthInitializationDirections = [0 0  0 1 -1];
-p.zenithInitializationDirections  = [0 1 -1 0  0];
+p.zenithPerturbationGain     = 0.1;
 
 % x={[1:p.numSettlingLaps],[p.numSettlingLaps+1:p.numSettlingLaps+1+p.numInitializationLaps-1],[p.numSettlingLaps+1+p.numInitializationLaps:p.numSettlingLaps+1+p.numInitializationLaps+p.numOptimizationLaps-1]}
 
@@ -35,13 +24,24 @@ p.kr2  = 100;
 p.tauR = 0.04;  % Ref model time const: 1/(tauR*s+1)^2
 
 % Waypoints
-p.height = 7;
-p.width  = 60;
+p.ic = 'above'; % which set of initial conditions to use, narrow or wide
 p.num    = 40;
 p.elev   = 45;
 p.waypointAzimuthTol = 0.5*(pi/180);
 p.wrapTolerance    = pi;
-p.trackingErrorWeight = 3000;
+p.trackingErrorWeight = 10;
+
+% Initialization Grid Settings
+p.azimuthOffset = 2; % degrees
+p.zenithOffset = 0.5; % degrees
+
+% Optimization Settings
+p.convergenceLim = 30;
+p.numSettlingLaps = 5; % Must be at least 1 (I don't reccomend less than 3 though).
+p.numOptimizationLaps = 100;
+p.numInitializationLaps = 5; % 5 or 9 point initialization
+p.azimuthDistanceLim = 3*p.azimuthOffset;
+p.zenithDistanceLim  = p.zenithOffset;
 
 % rHat Override
 % 0: allow distance from origin to vary
@@ -50,12 +50,12 @@ p.rHatOverride = 1;
 p.gravityOnOff = 1;
 
 % Simulation Time
-p.T = 10000;
+p.T = inf;
 p.Ts = 0.001; % Sample time
 
 % Lifting Body
-p.mass      = 60; % Mass
-p.momentArm = 10;  % Length of moment arm for rudder
+p.mass      = 50; % Mass
+p.momentArm = 10; % Length of moment arm for rudder
 
 % Aerodynamic Parameters
 p.oswaldEfficiency  = 0.8;
@@ -73,9 +73,8 @@ p.g         = 9.80665; % Acceleration due to gravity
 p.vWind = 3;
 
 % Initial Conditions
-p.initPositionGFS   = [100 0  (45*pi/180)]; % Initial position in spherical coordinates
+p.initPositionGFS   = [100 0  (p.elev*pi/180)]; % Initial position in spherical coordinates
 p.initVelocity      = 15; % Initial straight line speed (BFX direction)
-p.initTwist         = 0*(pi/180); % Initial twist angle
 p.initOmega         = 0; % Initial twist rate
 
 % Actuator Rate Limiters
@@ -97,24 +96,40 @@ p.refAreaWing     = p.refLengthWing*p.wingSpan; % Reference area of wing
 p.J               = (p.mass*p.wingSpan^2)/12; % Rotational inertia about body fixed z axis (approx with (ml^2)/12))
 p.refAreaRudder   = p.refLengthRudder*p.rudderSpan; % Ref aera of rudder
 
+% Waypoints
+switch p.ic
+    case 'narrow'
+        p.height = 5;
+        p.width  = 20;
+    case 'wide'
+        p.height = 7;
+        p.width  = 80;
+    case 'above'
+        p.height = 9;
+        p.width  = 30;
+end
+p.waypointZenithTol   = p.waypointAzimuthTol;
+p.waypointAngles = linspace((3/2)*pi,(3/2)*pi+2*pi,p.num+1);
+p.waypointAngles = p.waypointAngles(2:end);
+if p.numInitializationLaps == 5 % 5 point initialization
+    p.azimuthInitializationDirections = [0 1 -1 0  0];
+    p.zenithInitializationDirections  = [0 0 0  1 -1];
+elseif p.numInitializationLaps == 9 % 9 point initializations
+    p.azimuthInitializationDirections = [0 0  0 1 -1 1  1 -1 -1];
+    p.zenithInitializationDirections  = [0 1 -1 0  0 1 -1  1  1];
+end
+
+% Give the system an initial heading to point it straight at the first
+% waypoint (approximately)
+p.initTwist = atan2((pi/180)*(p.height*sin(p.waypointAngles(1)).*cos(p.waypointAngles(1))),...
+    (pi/180)*(p.width/2)*cos(p.waypointAngles(1))); % Initial twist angle
+
 % Initial velocity in GFS
 p.initVelocityGFS(1) = 0 ;
 p.initVelocityGFS(2) = (p.initVelocity*cos( p.initTwist))/...
     (p.initPositionGFS(1)*sin(p.initPositionGFS(3)));
 p.initVelocityGFS(3) = (p.initVelocity*sin(-p.initTwist))/(p.initPositionGFS(1));
 
-% Waypoints
-p.waypoints = generateWaypoints(p.num,p.height,p.width,p.elev);
-p.waypointZenithTol   = p.waypointAzimuthTol;
-p.waypointAngles = linspace((3/2)*pi,(3/2)*pi+2*pi,p.num+1);
-p.waypointAngles = p.waypointAngles(2:end);
-if p.numInitializationLaps == 5 % 5 point initialization
-    p.azimuthInitializationDirections = [0 0  0 1 -1];
-    p.zenithInitializationDirections  = [0 1 -1 0  0];
-elseif p.numInitializationLaps == 9 % 9 point initializations
-    p.azimuthInitializationDirections = [0 0  0 1 -1 1  1 -1 -1];
-    p.zenithInitializationDirections  = [0 1 -1 0  0 1 -1  1  1];
-end
 % Aspect Ratio
 p.AR = p.wingSpan/p.refLengthWing;
 
@@ -129,40 +144,6 @@ rudderTable = buildAirfoilTable(p,'rudder');
 % https://en.wikipedia.org/wiki/Crosswind_kite_power
 p.useablePower = (2/27)*p.rho*p.refAreaWing*wingTable.kl1*(max(wingTable.cl./wingTable.cd))^2*p.vWind^3;
 
-% Empty arraysfor storing things when we run loops, not used in all scripts
-p.widthsVec = [];
-p.heightsVec= [];
-
-p.performanceIndex = [];
-p.errorIndex = [];
-p.errorName = {};
-
-p.meanPARInit=[];
-p.performanceIndexInit=[];
-p.meanEnergyInit =[];
-p.errorIndexInit = [];
-p.errorNameInit = {};
-
-p.meanPAROpt=[];
-p.performanceIndexOpt=[];
-p.meanEnergyOpt =[];
-p.errorIndexOpt = [];
-p.errorNameOpt = {};
-
-
-
-
-p.tsc={};
-p.zenithInit = [];
-p.azimuthInit = [];
-
-p.XInit=[];
-p.xOpt={};
-p.Beta={};
-p.V={};
-
-p.gradientzenith=[];
-p.gradientazimuth=[];
 
 
 
