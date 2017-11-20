@@ -1,7 +1,9 @@
 % clc
 close all
 
-% Check to see that we're in the right directory
-modelName = 'CDCJournalModel';
-workingDir = which([modelName,'.slx']);
-cd(fileparts(workingDir))
+if p.verbose
+    fprintf('\nInitializing model.\n')
+end
+
+% Move to the right directory
+cd(fileparts(which('CDCJournalModel.slx')))
