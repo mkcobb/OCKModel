@@ -4,3 +4,5 @@ cd(fileparts(which('CDCJournalModel.slx')))
 addpath(genpath(pwd));
 % Load simulation parameters.
 p = simulationParametersClass;
+% Load up wind data
+windData = loadWindData;

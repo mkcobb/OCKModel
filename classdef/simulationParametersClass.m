@@ -12,6 +12,10 @@ classdef simulationParametersClass < handle
         % Save simulation results
         saveOnOff = 0;
         
+        % Turbulence
+        turbulenceOnOff = 1;
+        noiseSeeds = [23341 23342 23343 23344];
+        
         % RLS Settings
         forgettingFactor = 0.9;
         azimuthPerturbationPeriod  = 3;
@@ -22,10 +26,10 @@ classdef simulationParametersClass < handle
         % Rudder Controller
         kr1  = 100;
         kr2  = 100;
-        tauR = 0.04;  % Ref model time const: 1/(tauR*s+1)^2
+        tauR = 0.02;  % Ref model time const: 1/(tauR*s+1)^2
         
         % Waypoints
-        ic = 'above'; % which set of initial conditions to use, narrow or wide
+        ic = 'narrow'; % which set of initial conditions to use, narrow or wide
         num    = 40;
         elev   = 45;
         waypointAzimuthTol = 0.5*(pi/180);
@@ -65,14 +69,16 @@ classdef simulationParametersClass < handle
         
         % Wind Conditions
         vWind = 3;
+        windDirection = 0;
+        windAltitude = 146;
         
         % Initial Conditions
         initVelocity      = 15; % Initial straight line speed (BFX direction)
         initOmega         = 0; % Initial twist rate
         
         % Actuator Rate Limiters
-        wingAngleRateLimit = 360; % degrees/sec
-        rudderAngleRateLimit = 10*360; % degrees/sec
+        wingAngleRateLimit = inf; % degrees/sec
+        rudderAngleRateLimit = inf; % degrees/sec
         
         % Airfoil lift/drag coefficient fitting limits
         wingClStartAlpha = -0.1;
@@ -117,6 +123,7 @@ classdef simulationParametersClass < handle
         function val = get.J(obj)
             val = (obj.mass*obj.wingSpan^2)/12; % Rotational inertia about body fixed z axis (approx with (ml^2)/12))
         end
+        % somethinf in the next two is incorrect
         function val = get.height(obj)
             switch obj.ic
                 case 'narrow'

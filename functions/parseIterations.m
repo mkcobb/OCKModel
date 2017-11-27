@@ -2,7 +2,7 @@ function [iter, tscc] = parseIterations(tsc)
 indices = diff(tsc.currentIterationNumber.data);
 times = [0; tsc.time(indices==1);tsc.time(end)];
 idx = 1:length(indices);
-indices = idx(indices==1)+2;
+indices = idx(indices==1)-2;
 
 % Chop up the timeseries
 for ii = length(times)-1:-1:1
