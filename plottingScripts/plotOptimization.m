@@ -27,7 +27,7 @@ zlabel('Performance Index')
 
 %% Plot cost function
 figure
-subplot(3,1,1)
+subplot(4,1,1)
 plot(iter.performanceIndex(p.numSettlingLaps:end-1),...
     'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
@@ -38,7 +38,7 @@ xlabel('Iteration Number')
 ylabel('Performance Index')
 set(gca,'FontSize',20)
 
-subplot(3,1,2)
+subplot(4,1,2)
 plot(iter.meanEnergy(p.numSettlingLaps:end-1),...
     'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
@@ -49,7 +49,18 @@ xlabel('Iteration Number')
 ylabel({'Mean Energy','Term'})
 set(gca,'FontSize',20)
 
-subplot(3,1,3)
+subplot(4,1,3)
+plot(iter.meanPAR(p.numSettlingLaps:end-1),...
+    'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
+addPhaseMarkers
+grid on
+xlim([1 length(iter.performanceIndex(p.numSettlingLaps:end-1))])
+ylim(yLimits)
+xlabel('Iteration Number')
+ylabel({'Mean PAR','Term'})
+set(gca,'FontSize',20)
+
+subplot(4,1,4)
 plot(iter.performanceIndexTrackingTerm(p.numSettlingLaps:end-1),...
     'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers

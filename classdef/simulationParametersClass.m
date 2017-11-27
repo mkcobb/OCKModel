@@ -4,7 +4,7 @@ classdef simulationParametersClass < handle
         verbose = 1;
         
         % Plotting Parameters
-        plotsOnOff = 0;
+        plotsOnOff = 1;
         
         % Simulink animation parameters
         animationOnOff = 0;
@@ -17,7 +17,7 @@ classdef simulationParametersClass < handle
         noiseSeeds = [23341 23342 23343 23344];
         
         % RLS Settings
-        forgettingFactor = 0.9;
+        forgettingFactor = 0.95;
         azimuthPerturbationPeriod  = 3;
         azimuthPerturbationGain    = 1;
         zenithPerturbationPeriod   = 5;
@@ -29,12 +29,16 @@ classdef simulationParametersClass < handle
         tauR = 0.02;  % Ref model time const: 1/(tauR*s+1)^2
         
         % Waypoints
-        ic = 'narrow'; % which set of initial conditions to use, narrow or wide
+        ic = 'wide'; % which set of initial conditions to use, narrow or wide
         num    = 40;
         elev   = 45;
         waypointAzimuthTol = 0.5*(pi/180);
         wrapTolerance    = pi;
-        trackingErrorWeight = 10;
+        
+        % Cost function calculations
+        energyTermSwitch = 2; % 1 for mean energy, 2 for mean PAR
+        energyTrackingWeight = 200;
+        PARTrackingWeight = 0.1;
         
         % Initialization Grid Settings
         azimuthOffset = 2; % degrees
@@ -43,7 +47,7 @@ classdef simulationParametersClass < handle
         % Optimization Settings
         convergenceLim = 30;
         numSettlingLaps = 5; % Must be at least 1 (I don't reccomend less than 3 though).
-        numOptimizationLaps = 100;
+        numOptimizationLaps = 200;
         numInitializationLaps = 5; % 5 or 9 point initialization
         
         % Simulation Time
@@ -60,6 +64,9 @@ classdef simulationParametersClass < handle
         wingSpan          = 5;
         refLengthRudder   = 1.5;
         rudderSpan        = 4;
+        
+        % Turbine parameters
+        tauTurbine=0.1;
         
         % Environmental
         rho       = 1.225; % density of air kg/m^3
