@@ -1,83 +1,80 @@
 classdef simulationParametersClass < handle
     properties (SetObservable)
-        % Text output parameters
-        verbose = 1;
+        % Simulation Time
+        T = 2*60*60;
+        Ts = 0.001; % Sample time
         
-        % Plotting Parameters
-        plotsOnOff = 1;
+        % Output Settings
+        verbose         = 1; % Text output to command window
+        plotsOnOff      = 1; % Generate plots
+        animationOnOff  = 0; % Generate animations
+        saveOnOff       = 0; % Save data to the hard drive
         
-        % Simulink animation parameters
-        animationOnOff = 0;
-        
-        % Save simulation results
-        saveOnOff = 0;
-        
-        % Turbulence
-        turbulenceOnOff = 1;
-        noiseSeeds = [23341 23342 23343 23344];
-        
-        % RLS Settings
-        forgettingFactor = 0.95;
-        azimuthPerturbationPeriod  = 3;
-        azimuthPerturbationGain    = 1;
-        zenithPerturbationPeriod   = 5;
-        zenithPerturbationGain     = 0.1;
-        
-        % Rudder Controller
-        kr1  = 100;
-        kr2  = 100;
-        tauR = 0.02;  % Ref model time const: 1/(tauR*s+1)^2
-        
-        % Waypoints
-        ic = 'wide'; % which set of initial conditions to use, narrow or wide
-        num    = 40;
-        elev   = 45;
-        waypointAzimuthTol = 0.5*(pi/180);
-        wrapTolerance    = pi;
-        
-        % Cost function calculations
-        energyTermSwitch = 2; % 1 for mean energy, 2 for mean PAR
-        energyTrackingWeight = 200;
-        PARTrackingWeight = 0.1;
-        
-        % Initialization Grid Settings
-        azimuthOffset = 2; % degrees
-        zenithOffset = 0.5; % degrees
+        % Simulation Switches
+        gravityOnOff        = 1; % 0 turns gravity off
+        windVariant         = 3; % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+        turbulenceOnOff     = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
+        energyTermSwitch    = 2; % Which energy term to use in performance index 1 for mean energy, 2 for mean PAR
+        updateTypeSwitch    = 2; % 1 for optimality based ILC update law, 2 for gradient-based ILC update law
+        persistentExcitationSwitch = 2; % 1 for sin and cos, 2 for white noise
         
         % Optimization Settings
-        convergenceLim = 30;
-        numSettlingLaps = 5; % Must be at least 1 (I don't reccomend less than 3 though).
-        numOptimizationLaps = 200;
-        numInitializationLaps = 5; % 5 or 9 point initialization
+%         convergenceLim          = 30;   % I don't remember what this is, not sure it's still used
+        numSettlingLaps         = 5;    % Must be at least 1 (I don't reccomend less than 3 though).
+        numOptimizationLaps     = inf;  % Number of optimization iterations
+        numInitializationLaps   = 5;    % 5 or 9 point initialization
         
-        % Simulation Time
-        T = inf;
-        Ts = 0.001; % Sample time
+        % Performance Index Weights
+        energyTrackingWeight    = 400;  % Weight on spatial tracking when mean energy is used in performance index
+        PARTrackingWeight       = 0.75; % Weight on spatial tracking when mean PAR is used in performance index
+        
+        % RLS Settings
+        forgettingFactor    = 0.9;
+        azimuthOffset       = 3;    % degrees, initialization grid step size
+        zenithOffset        = 0.5;  % degrees, initialization grid step size
+        
+        % Persistent Excitation Settings
+        azimuthPerturbationPeriod  = 3; % azimuth basis parameter amplitude
+        azimuthPerturbationGain    = 3; % azimuth basis parameter period (not used in white noise implementation)
+        zenithPerturbationPeriod   = 4; % zenith basis parameter amiplitude
+        zenithPerturbationGain     = 0.1; % zenith basis parameter period (not used in white noise implementation)
+        
+        % Waypoints Settings
+        ic      = 'wide'; % which set of initial conditions to use, narrow or wide
+        num     = 40; % number of waypoints
+        elev    = 45; % mean course elevation
+        waypointAzimuthTol = 0.5*(pi/180); % Tolerance which defines when a waypoint has been reached
+        
+        % Rudder Controller
+        kr1  = 100; % Controller gain
+        kr2  = 100; % Controller gain
+        tauR = 0.02;  % Ref model time const: 1/(tauR*s+1)^2
+        
+        % Wind parameters
+        vWind           = 7; % Mean wind speed (used when windVariant = 1)
+        windDirection   = 0; % Wind heading in degrees
+        windAltitude    = 146; % Must be one of the available altitudes from Dr. Archer's data
+        noiseSeeds      = [23341 23342 23343 23344];  % Noise seeds used in white noise generators for von Karman turbulence
+        
+        % Data Logging Parameters
+        decimation = 10; % Log data every N points
         
         % Lifting Body
         mass      = 50; % Mass
         momentArm = 10; % Length of moment arm for rudder
         
         % Aerodynamic Parameters
-        oswaldEfficiency  = 0.8;
+        oswaldEfficiency  = 0.8; % For both wing and rudder
         refLengthWing     = 1; % Chord length of airfoil
-        wingSpan          = 5;
-        refLengthRudder   = 1.5;
-        rudderSpan        = 4;
-        
-        % Turbine parameters
-        tauTurbine=0.1;
+        wingSpan          = 5; % Wing span
+        refLengthRudder   = 1.5; % Rudder reference length (chord)
+        rudderSpan        = 4; % Rudder span
         
         % Environmental
-        rho       = 1.225; % density of air kg/m^3
-        viscosity = 1.4207E-5; % Kinematic viscosity of air
-        g         = 9.80665; % Acceleration due to gravity
-        gravityOnOff = 1; % 0 turns gravity off
+        rho             = 1.225; % density of air kg/m^3
+        viscosity       = 1.4207E-5; % Kinematic viscosity of air
+        g               = 9.80665; % Acceleration due to gravity
         
-        % Wind Conditions
-        vWind = 3;
-        windDirection = 0;
-        windAltitude = 146;
         
         % Initial Conditions
         initVelocity      = 15; % Initial straight line speed (BFX direction)
@@ -96,14 +93,15 @@ classdef simulationParametersClass < handle
         rudderClEndAlpha   = 0.1;
         rudderCdStartAlpha = -0.1;
         rudderCdEndAlpha   = 0.1;
+        height                           % Initial course width
+        width                            % Initial course height
     end
     
     properties (Dependent)
         refAreaWing                      % Wing reference area
         refAreaRudder                    % Rudder reference area
         J                                % Moment inertia about body fixe z axis
-        height                           % Initial course width
-        width                            % Initial course height
+        
         waypointZenithTol                % Waypoint zenith reached tolerance
         waypointAngles                   % Parametric angles which define waypoints
         azimuthInitializationDirections  % Defines the grid of initialization points
@@ -130,25 +128,31 @@ classdef simulationParametersClass < handle
         function val = get.J(obj)
             val = (obj.mass*obj.wingSpan^2)/12; % Rotational inertia about body fixed z axis (approx with (ml^2)/12))
         end
-        % somethinf in the next two is incorrect
+        
         function val = get.height(obj)
             switch obj.ic
                 case 'narrow'
-                    val = 5;
+                    val = 6;
+                    obj.width = 30;
                 case 'wide'
                     val = 7;
-                case 'above'
-                    val = 8;
+                    obj.width = 80;
+                case 'short'
+                    val = 6;
+                    obj.width = 60;
             end
         end
         function val = get.width(obj)
             switch obj.ic
                 case 'narrow'
-                    val = 20;
+                    val = 30;
+                    obj.height = 6;
                 case 'wide'
                     val = 80;
-                case 'above'
-                    val = 30;
+                    obj.height = 7;
+                case 'short'
+                    val = 60;
+                    obj.height = 6;
             end
         end
         function val = get.waypointZenithTol(obj)
@@ -202,10 +206,10 @@ classdef simulationParametersClass < handle
             val = buildAirfoilTable(obj,'rudder');
         end
         function val = get.useablePower(obj)
-        %     % Useable power for this design
-        %     % https://en.wikipedia.org/wiki/Crosswind_kite_power
-        val = (2/27)*obj.rho*obj.refAreaWing*obj.wingTable.kl1*(max(obj.wingTable.cl./obj.wingTable.cd))^2*obj.vWind^3;
-        
+            % Useable power for this design
+            % https://en.wikipedia.org/wiki/Crosswind_kite_power
+            val = (2/27)*obj.rho*obj.refAreaWing*obj.wingTable.kl1*(max(obj.wingTable.cl./obj.wingTable.cd))^2*obj.vWind^3;
+            
         end
         function val = get.azimuthDistanceLim(obj)
             val = 3*obj.azimuthOffset;

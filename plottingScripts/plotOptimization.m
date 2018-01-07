@@ -18,16 +18,21 @@ scatter3((180/pi)*iter.basisParams(p.numSettlingLaps:end-1,1),...
 plot3((180/pi)*iter.basisParams(p.numSettlingLaps:end-1,1),...
     (180/pi)*iter.basisParams(p.numSettlingLaps:end-1,2),...
     iter.performanceIndex(p.numSettlingLaps:end-1))
+scatter3((180/pi)*iter.basisParams(end,1),...
+    (180/pi)*iter.basisParams(end,2),...
+    iter.performanceIndex(end),...
+    'MarkerFaceColor','flat','CData',[1 0 0],'SizeData',72)
 
 xlabel('Width, Azimuth Sweep, [deg]')
 ylabel('Height, Zenith Sweep, [deg]')
 zlabel('Performance Index')
+zlim([min(min(iter.performanceIndex(p.numSettlingLaps:end-1))) max(max(iter.performanceIndex(p.numSettlingLaps:end-1)))])
 % ylim([min(min(approxSurf)) max(max(approxSurf))])
 
 
 %% Plot cost function
 figure
-subplot(4,1,1)
+subplot(2,2,1)
 plot(iter.performanceIndex(p.numSettlingLaps:end-1),...
     'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
@@ -38,7 +43,7 @@ xlabel('Iteration Number')
 ylabel('Performance Index')
 set(gca,'FontSize',20)
 
-subplot(4,1,2)
+subplot(2,2,2)
 plot(iter.meanEnergy(p.numSettlingLaps:end-1),...
     'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
@@ -49,7 +54,7 @@ xlabel('Iteration Number')
 ylabel({'Mean Energy','Term'})
 set(gca,'FontSize',20)
 
-subplot(4,1,3)
+subplot(2,2,3)
 plot(iter.meanPAR(p.numSettlingLaps:end-1),...
     'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
@@ -60,7 +65,7 @@ xlabel('Iteration Number')
 ylabel({'Mean PAR','Term'})
 set(gca,'FontSize',20)
 
-subplot(4,1,4)
+subplot(2,2,4)
 plot(iter.performanceIndexTrackingTerm(p.numSettlingLaps:end-1),...
     'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
@@ -72,10 +77,10 @@ ylabel({'Spatial Error','Term'})
 set(gca,'FontSize',20)
 
 %% Plot initial and final course geometry
-figure
-plotTrajectory(tscc,1)
-hold on
-plotTrajectory(tscc,length(tscc)-1)
+% figure
+% plotTrajectory(tscc,1)
+% hold on
+% plotTrajectory(tscc,length(tscc)-1)
 
 
 
