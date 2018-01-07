@@ -1,3 +1,4 @@
+%%
 if p.verbose
     evalTime=toc;
     fprintf('Simulation Complete:\n')
@@ -8,6 +9,7 @@ if p.verbose
             ,num2str(evalTime/tout(end)))
     end
 end
+%%
 if ~exist('logsout','var')
     if exist('out.mat','file')==2
         if p.verbose
@@ -15,7 +17,7 @@ if ~exist('logsout','var')
         end
 %         pause(300)
         load('out.mat')
-        if ~exist('logsout','var')&& exist('tmp_raccel_logsout','var')
+        if ~exist('logsout','var') && exist('tmp_raccel_logsout','var')
             if p.verbose
                 fprintf('\nFile out.mat does not contain logsout variable, creating logsout from tmp_raccel_logsout variable.\n')
             end
