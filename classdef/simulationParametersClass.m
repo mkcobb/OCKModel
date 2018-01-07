@@ -1,8 +1,8 @@
 classdef simulationParametersClass < handle
     properties (SetObservable)
         % Simulation Time
-        T = 2*60*60;
-        Ts = 0.001; % Sample time
+        T = 2*60*60; % Total Simulation Time
+        Ts = 0.002;  % Sample time
         
         % Output Settings
         verbose         = 1; % Text output to command window
@@ -15,11 +15,10 @@ classdef simulationParametersClass < handle
         windVariant         = 3; % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
         turbulenceOnOff     = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
         energyTermSwitch    = 2; % Which energy term to use in performance index 1 for mean energy, 2 for mean PAR
-        updateTypeSwitch    = 2; % 1 for optimality based ILC update law, 2 for gradient-based ILC update law
+        updateTypeSwitch    = 1; % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
         persistentExcitationSwitch = 2; % 1 for sin and cos, 2 for white noise
         
         % Optimization Settings
-%         convergenceLim          = 30;   % I don't remember what this is, not sure it's still used
         numSettlingLaps         = 5;    % Must be at least 1 (I don't reccomend less than 3 though).
         numOptimizationLaps     = inf;  % Number of optimization iterations
         numInitializationLaps   = 5;    % 5 or 9 point initialization
@@ -29,7 +28,7 @@ classdef simulationParametersClass < handle
         PARTrackingWeight       = 0.75; % Weight on spatial tracking when mean PAR is used in performance index
         
         % RLS Settings
-        forgettingFactor    = 0.9;
+        forgettingFactor    = 0.99; % Forgetting factor used in RLS response surface update
         azimuthOffset       = 3;    % degrees, initialization grid step size
         zenithOffset        = 0.5;  % degrees, initialization grid step size
         
@@ -38,6 +37,10 @@ classdef simulationParametersClass < handle
         azimuthPerturbationGain    = 3; % azimuth basis parameter period (not used in white noise implementation)
         zenithPerturbationPeriod   = 4; % zenith basis parameter amiplitude
         zenithPerturbationGain     = 0.1; % zenith basis parameter period (not used in white noise implementation)
+        
+        % ILC Learning Gains
+        KLearningNewton   = .1; % ILC learning gain for Newton-based update
+        KLearningGradient = .2; % ILC learning gain for gradient-based update
         
         % Waypoints Settings
         ic      = 'wide'; % which set of initial conditions to use, narrow or wide
@@ -71,20 +74,20 @@ classdef simulationParametersClass < handle
         rudderSpan        = 4; % Rudder span
         
         % Environmental
-        rho             = 1.225; % density of air kg/m^3
+        rho             = 1.225;     % density of air kg/m^3
         viscosity       = 1.4207E-5; % Kinematic viscosity of air
-        g               = 9.80665; % Acceleration due to gravity
-        
+        g               = 9.80665;   % Acceleration due to gravity
         
         % Initial Conditions
         initVelocity      = 15; % Initial straight line speed (BFX direction)
-        initOmega         = 0; % Initial twist rate
+        initOmega         = 0;  % Initial twist rate
         
         % Actuator Rate Limiters
-        wingAngleRateLimit = inf; % degrees/sec
+        wingAngleRateLimit = inf;   % degrees/sec
         rudderAngleRateLimit = inf; % degrees/sec
         
         % Airfoil lift/drag coefficient fitting limits
+        % Defines the range of angles of attack over which we fit a line
         wingClStartAlpha = -0.1;
         wingClEndAlpha   = 0.1;
         wingCdStartAlpha = -0.1;
@@ -93,6 +96,8 @@ classdef simulationParametersClass < handle
         rudderClEndAlpha   = 0.1;
         rudderCdStartAlpha = -0.1;
         rudderCdEndAlpha   = 0.1;
+        
+        % Initial Course Geometry
         height                           % Initial course width
         width                            % Initial course height
     end
@@ -101,7 +106,6 @@ classdef simulationParametersClass < handle
         refAreaWing                      % Wing reference area
         refAreaRudder                    % Rudder reference area
         J                                % Moment inertia about body fixe z axis
-        
         waypointZenithTol                % Waypoint zenith reached tolerance
         waypointAngles                   % Parametric angles which define waypoints
         azimuthInitializationDirections  % Defines the grid of initialization points
