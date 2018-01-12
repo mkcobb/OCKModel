@@ -16,7 +16,7 @@ if ~exist('logsout','var')
             fprintf('\nUnable to locate logsout in workspace.  Loading out.mat from file.\n')
         end
 %         pause(300)
-        load('out.mat')
+        load(fullfile(pwd,'out.mat'))
         if ~exist('logsout','var') && exist('tmp_raccel_logsout','var')
             if p.verbose
                 fprintf('\nFile out.mat does not contain logsout variable, creating logsout from tmp_raccel_logsout variable.\n')
@@ -39,7 +39,7 @@ tsc = dataset2TSC(logsout);
 if p.verbose
     fprintf('\nExtracting iteration data from timeseries collection.\n')
 end
-iter = parseIterations(tsc);
+iter = parseIterations(tsc,p);
 if p.verbose
     if ~tsc.simulationCompleteFlag.data(end)
         fprintf('\nSimulation failed:\n')
@@ -58,18 +58,28 @@ if p.saveOnOff
     else
         sf='succeeded';
     end
-    fileName =  sprintf('%s_%s_%s.mat',p.ic,sf,datestr(datetime('now'),'hhMMss_ddmmyyyy'));
-    if p.verbose
-        fprintf('\nSaving simulation data: %s\n',fileName,sf)
+    if p.windVariant ==3
+        if p.verbose
+            fprintf('\nSaving simulation data: %s\n',p.saveFile)
+        end
+        
+        save([p.savePath p.saveFile],...
+            'p','iter','windData','-v7.3')
+    elseif p.windVariant == 1
+        fileName = fullfile(pwd,'data',sprintf('constantWind_%sIC.mat',p.ic));
+        if p.verbose
+            fprintf('\nSaving simulation data: %s\n',p.saveFile)
+        end
+        save([p.savePath p.saveFile],...
+            'p','iter','windData','-v7.3')
     end
-    save(fullfile(pwd,'data',...
-        fileName),...
-        'tsc','p','iter','-v7.3')
 end
 if p.verbose
     fprintf('Complete\n')
-    load train
-    sound(y,Fs)
+    if p.soundOnOff == 1
+        load train
+        sound(y,Fs)
+    end
 end
 
 

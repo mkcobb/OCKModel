@@ -21,7 +21,7 @@ end
 
 NREL = xlsread('NRELWindData.xlsx','G2:G1411');
 windData.NREL = timeseries(NREL,0:60:60*(length(NREL)-1));
-
+windData.NRELLookupTable = [[0:60:60*(length(NREL)-1)]',NREL];
 % move it to the base work space
 assignin('base','windData',windData);
 

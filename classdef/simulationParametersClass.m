@@ -8,7 +8,8 @@ classdef simulationParametersClass < handle
         verbose         = 1; % Text output to command window
         plotsOnOff      = 1; % Generate plots
         animationOnOff  = 0; % Generate animations
-        saveOnOff       = 0; % Save data to the hard drive
+        saveOnOff       = 1; % Save data to the hard drive
+        soundOnOff      = 1;
         
         % Simulation Switches
         gravityOnOff        = 1; % 0 turns gravity off
@@ -120,9 +121,28 @@ classdef simulationParametersClass < handle
         azimuthDistanceLim               % Trust region for optimization update on azimuth basis param
         zenithDistanceLim                % Trust region for optimization update on zenith basis param
         initPositionGFS                  % Initial position in ground fixed spherical coordinates
+        saveFile                         % File name of the resulting data file
+        savePath                         % Path to the resulting data file
+        windVariantName                  % String describing the wind variant
     end
     
     methods
+        function val = get.savePath(obj)
+            val = fullfile(fileparts(obj.modelPath),'data',filesep);
+        end
+        function val = get.windVariantName(obj)
+           switch obj.windVariant
+               case 1
+                   val = 'Constant';
+               case 2
+                   val = 'VonKarman';
+               case 3
+                   val = 'NREL';
+           end
+        end
+        function val = get.saveFile(obj)
+           val = sprintf('%s_%s_%s.mat',obj.ic,obj.windVariantName,datestr(now,'ddmm_hhMMss')); 
+        end
         function val = get.refAreaWing(obj)
             val = obj.refLengthWing*obj.wingSpan; % Reference area of wing
         end
@@ -135,12 +155,12 @@ classdef simulationParametersClass < handle
         
         function val = get.height(obj)
             switch obj.ic
-                case 'narrow'
-                    val = 6;
-                    obj.width = 30;
+                case 'both'
+                    val = 7.5;
+                    obj.width = 90;
                 case 'wide'
-                    val = 7;
-                    obj.width = 80;
+                    val = 12;
+                    obj.width = 100;
                 case 'short'
                     val = 6;
                     obj.width = 60;
@@ -148,12 +168,12 @@ classdef simulationParametersClass < handle
         end
         function val = get.width(obj)
             switch obj.ic
-                case 'narrow'
-                    val = 30;
-                    obj.height = 6;
+                case 'both'
+                    val = 90;
+                    obj.height = 7.5;
                 case 'wide'
-                    val = 80;
-                    obj.height = 7;
+                    val = 100;
+                    obj.height = 12;
                 case 'short'
                     val = 60;
                     obj.height = 6;

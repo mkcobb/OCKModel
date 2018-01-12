@@ -1,5 +1,7 @@
 if p.verbose
     fprintf('\nStarting Model.\n')
+    fprintf('Settings:')
+    p
 end
 
 if p.verbose
