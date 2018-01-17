@@ -13,7 +13,7 @@ classdef simulationParametersClass < handle
         
         % Simulation Switches
         gravityOnOff        = 1; % 0 turns gravity off
-        windVariant         = 3; % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+        windVariant         = 1; % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
         turbulenceOnOff     = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
         energyTermSwitch    = 2; % Which energy term to use in performance index 1 for mean energy, 2 for mean PAR
         updateTypeSwitch    = 1; % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
@@ -40,14 +40,14 @@ classdef simulationParametersClass < handle
         zenithPerturbationGain     = 0.1; % zenith basis parameter period (not used in white noise implementation)
         
         % ILC Learning Gains
-        KLearningNewton   = .1; % ILC learning gain for Newton-based update
+        KLearningNewton   = .2; % ILC learning gain for Newton-based update
         KLearningGradient = .2; % ILC learning gain for gradient-based update
         
         % Waypoints Settings
         ic      = 'wide'; % which set of initial conditions to use, narrow or wide
         num     = 40; % number of waypoints
         elev    = 45; % mean course elevation
-        waypointAzimuthTol = 0.5*(pi/180); % Tolerance which defines when a waypoint has been reached
+        waypointAzimuthTol = 0.25*(pi/180); % Tolerance which defines when a waypoint has been reached
         
         % Rudder Controller
         kr1  = 100; % Controller gain
@@ -80,7 +80,7 @@ classdef simulationParametersClass < handle
         g               = 9.80665;   % Acceleration due to gravity
         
         % Initial Conditions
-        initVelocity      = 15; % Initial straight line speed (BFX direction)
+        initVelocity      = 30; % Initial straight line speed (BFX direction)
         initOmega         = 0;  % Initial twist rate
         
         % Actuator Rate Limiters
@@ -141,7 +141,13 @@ classdef simulationParametersClass < handle
            end
         end
         function val = get.saveFile(obj)
-           val = sprintf('%s_%s_%s.mat',obj.ic,obj.windVariantName,datestr(now,'ddmm_hhMMss')); 
+            switch obj.updateTypeSwitch
+                case 1
+                    learningGain = obj.KLearningNewton;
+                otherwise
+                    learningGain = obj.KLearningGradient;
+            end
+                    val = sprintf('%s_%s_ke%0.2f_%s.mat',obj.ic,obj.windVariantName,learningGain,datestr(now,'ddmm_hhMMss')); 
         end
         function val = get.refAreaWing(obj)
             val = obj.refLengthWing*obj.wingSpan; % Reference area of wing
@@ -162,7 +168,7 @@ classdef simulationParametersClass < handle
                     val = 12;
                     obj.width = 100;
                 case 'short'
-                    val = 6;
+                    val = 6.5;
                     obj.width = 60;
             end
         end
@@ -176,7 +182,7 @@ classdef simulationParametersClass < handle
                     obj.height = 12;
                 case 'short'
                     val = 60;
-                    obj.height = 6;
+                    obj.height = 6.5;
             end
         end
         function val = get.waypointZenithTol(obj)
