@@ -26,28 +26,28 @@ classdef simulationParametersClass < handle
         
         % Performance Index Weights
         energyTrackingWeight    = 400;  % Weight on spatial tracking when mean energy is used in performance index
-        PARTrackingWeight       = 0.75; % Weight on spatial tracking when mean PAR is used in performance index
+        PARTrackingWeight       = 400; % Weight on spatial tracking when mean PAR is used in performance index
         
         % RLS Settings
-        forgettingFactor    = 0.99; % Forgetting factor used in RLS response surface update
+        forgettingFactor    = 0.98; % Forgetting factor used in RLS response surface update
         azimuthOffset       = 3;    % degrees, initialization grid step size
         zenithOffset        = 0.5;  % degrees, initialization grid step size
         
         % Persistent Excitation Settings
-        azimuthPerturbationPeriod  = 3; % azimuth basis parameter amplitude
+        azimuthPerturbationPeriod  = 4; % azimuth basis parameter amplitude
         azimuthPerturbationGain    = 3; % azimuth basis parameter period (not used in white noise implementation)
         zenithPerturbationPeriod   = 4; % zenith basis parameter amiplitude
-        zenithPerturbationGain     = 0.1; % zenith basis parameter period (not used in white noise implementation)
+        zenithPerturbationGain     = 0.5; % zenith basis parameter period (not used in white noise implementation)
         
         % ILC Learning Gains
-        KLearningNewton   = .2; % ILC learning gain for Newton-based update
+        KLearningNewton   = .3; % ILC learning gain for Newton-based update
         KLearningGradient = .2; % ILC learning gain for gradient-based update
         
         % Waypoints Settings
         ic      = 'wide'; % which set of initial conditions to use, narrow or wide
         num     = 40; % number of waypoints
         elev    = 45; % mean course elevation
-        waypointAzimuthTol = 0.25*(pi/180); % Tolerance which defines when a waypoint has been reached
+        waypointAzimuthTol = 0.2*(pi/180); % Tolerance which defines when a waypoint has been reached
         
         % Rudder Controller
         kr1  = 100; % Controller gain
@@ -80,7 +80,7 @@ classdef simulationParametersClass < handle
         g               = 9.80665;   % Acceleration due to gravity
         
         % Initial Conditions
-        initVelocity      = 30; % Initial straight line speed (BFX direction)
+        initVelocity      = 15; % Initial straight line speed (BFX direction)
         initOmega         = 0;  % Initial twist rate
         
         % Actuator Rate Limiters
@@ -124,9 +124,35 @@ classdef simulationParametersClass < handle
         saveFile                         % File name of the resulting data file
         savePath                         % Path to the resulting data file
         windVariantName                  % String describing the wind variant
+        initialWaypointAzimuths          % Initial vector of waypoint azimuths
+        initialWaypointZeniths           % Initial vector of waypoint zeniths
+        waypointToleranceArcLength       % Length of arch used to normalize the spatial tracking error term
     end
     
     methods
+        function val = get.waypointToleranceArcLength(obj)
+            
+            lat1 = 0;
+            lon1 = 0;
+            lat2 = obj.waypointZenithTol;
+            lon2 = obj.waypointAzimuthTol;
+            a = sin((lat2-lat1)/2).^2 + cos(lat1) .* cos(lat2) .* sin((lon2-lon1)/2).^2;
+            
+            % Ensure that a falls in the closed interval [0 1].
+            a(a < 0) = 0;
+            a(a > 1) = 1;
+            
+            val = obj.initPositionGFS(1) * 2 * atan2(sqrt(a),sqrt(1 - a));
+        end
+        function val = get.initialWaypointAzimuths(obj)
+           psi = obj.waypointAngles;
+           val = (pi/180)*(obj.width/2)*cos(psi);
+        end
+        function val = get.initialWaypointZeniths(obj)
+           psi = obj.waypointAngles;
+           val = -1*(pi/180)*obj.height*sin(psi).*cos(psi)+obj.elev*(pi/180);
+        end
+        
         function val = get.savePath(obj)
             val = fullfile(fileparts(obj.modelPath),'data',filesep);
         end

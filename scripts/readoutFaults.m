@@ -1,8 +1,17 @@
 tsNames = gettimeseriesnames(tsc);
-tsNames = tsNames(contains(tsNames,'fault'));
-fprintf('Val Name\n')
-for ii = 1:length(tsNames)
-  val = eval(sprintf('tsc.%s.data(end);',tsNames{ii}));
-  name = tsNames{ii};
-  fprintf(' %d  %s\n',val,name)
+errorNames   = tsNames(contains(tsNames,'fault','IgnoreCase',true));
+warningNames = tsNames(contains(tsNames,'warning','IgnoreCase',true));
+
+fprintf('Val | Error Name\n')
+for ii = 1:length(errorNames)
+  val = eval(sprintf('tsc.%s.data(end);',errorNames{ii}));
+  name = errorNames{ii};
+  fprintf(' %d  | %s\n',val,name)
+end
+
+fprintf('\nVal | Warning Name\n')
+for ii = 1:length(warningNames)
+  val = eval(sprintf('any(tsc.%s.data(:));',warningNames{ii}));
+  name = warningNames{ii};
+  fprintf(' %d  | %s\n',val,name)
 end

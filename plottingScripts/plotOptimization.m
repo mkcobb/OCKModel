@@ -34,7 +34,7 @@ zlim([min(min(iter.performanceIndex(p.numSettlingLaps:end-1))) max(max(iter.perf
 figure
 subplot(2,2,1)
 plot(iter.performanceIndex(p.numSettlingLaps:end-1),...
-    'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
+    'LineWidth',1,'Marker','none','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
 grid on
 xlim([1 length(iter.performanceIndex(p.numSettlingLaps:end-1))])
@@ -45,7 +45,7 @@ set(gca,'FontSize',20)
 
 subplot(2,2,2)
 plot(iter.meanEnergy(p.numSettlingLaps:end-1),...
-    'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
+    'LineWidth',1,'Marker','none','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
 grid on
 xlim([1 length(iter.performanceIndex(p.numSettlingLaps:end-1))])
@@ -56,7 +56,7 @@ set(gca,'FontSize',20)
 
 subplot(2,2,3)
 plot(iter.meanPAR(p.numSettlingLaps:end-1),...
-    'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
+    'LineWidth',1,'Marker','none','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
 grid on
 xlim([1 length(iter.performanceIndex(p.numSettlingLaps:end-1))])
@@ -67,7 +67,7 @@ set(gca,'FontSize',20)
 
 subplot(2,2,4)
 plot(iter.performanceIndexTrackingTerm(p.numSettlingLaps:end-1),...
-    'LineWidth',2,'Marker','o','MarkerFaceColor','k','MarkerEdgeColor','k')
+    'LineWidth',1,'Marker','none','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
 grid on
 xlim([1 length(iter.performanceIndex(p.numSettlingLaps:end-1))])
@@ -76,11 +76,6 @@ xlabel('Iteration Number')
 ylabel({'Spatial Error','Term'})
 set(gca,'FontSize',20)
 
-%% Plot initial and final course geometry
-% figure
-% plotTrajectory(tscc,1)
-% hold on
-% plotTrajectory(tscc,length(tscc)-1)
 
 
 

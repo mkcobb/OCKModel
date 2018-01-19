@@ -15,7 +15,6 @@ if ~exist('logsout','var')
         if p.verbose
             fprintf('\nUnable to locate logsout in workspace.  Loading out.mat from file.\n')
         end
-%         pause(300)
         load(fullfile(pwd,'out.mat'))
         if ~exist('logsout','var') && exist('tmp_raccel_logsout','var')
             if p.verbose
@@ -41,39 +40,21 @@ if p.verbose
 end
 iter = parseIterations(tsc,p);
 if p.verbose
-    if ~tsc.simulationCompleteFlag.data(end)
-        fprintf('\nSimulation failed:\n')
-        readoutFaults
-    else
-        fprintf('\nSimulation successful:\n')
-    end
+    readoutFaults
 end
 if p.plotsOnOff
     plotOptimization
 end
 
+% Save data
 if p.saveOnOff
-    if ~tsc.simulationCompleteFlag.data(end)
-        sf='failed';
-    else
-        sf='succeeded';
+    fileName = p.saveFile;
+    if p.verbose
+        fprintf('\nSaving simulation data: %s\n',fileName)
     end
-    if p.windVariant ==3
-        if p.verbose
-            fprintf('\nSaving simulation data: %s\n',p.saveFile)
-        end
-        
-        save([p.savePath p.saveFile],...
-            'p','iter','windData','-v7.3')
-    elseif p.windVariant == 1
-        fileName = fullfile(pwd,'data',sprintf('constantWind_%sIC.mat',p.ic));
-        if p.verbose
-            fprintf('\nSaving simulation data: %s\n',p.saveFile)
-        end
-        save([p.savePath p.saveFile],...
-            'p','iter','windData','-v7.3')
-    end
+    save([p.savePath fileName],'p','iter','windData','-v7.3')
 end
+
 if p.verbose
     fprintf('Complete\n')
     if p.soundOnOff == 1
@@ -81,5 +62,6 @@ if p.verbose
         sound(y,Fs)
     end
 end
+clearvars logsout
 
 

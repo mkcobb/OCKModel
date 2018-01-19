@@ -1,22 +1,19 @@
-function p = generateWaypoints(n,h,w,elev)
-startPsi = (3/2)*pi;
-endPsi   = startPsi+2*pi;
-
+function [azimuth,zenith] = generateWaypoints(n,h,w,elev)
 % Parameterize the curve based on lemniscate of Gerono.
 % Generate an extra point so that we can get rid of the first waypoint
 % later
-p.psi = linspace(startPsi,endPsi,n+1);
+psi = linspace((3/2)*pi,(3/2)*pi+2*pi,n+1);
 
 % Calculate the lemniscate
-thetaDeg = (w/2)*cos(p.psi); % Azimuth angle 
-phiDeg   = -1*h*sin(p.psi).*cos(p.psi)+elev; % Elevation angle
+azimuthDeg = (w/2)*cos(psi); % Azimuth angle 
+elevationDeg   = -1*h*sin(psi).*cos(psi)+elev; % Elevation angle
 
 % Discard the first waypoint
-p.psi      = p.psi(2:end);
-p.thetaDeg = thetaDeg(2:end);
-p.phiDeg   = phiDeg(2:end);
+psi      = psi(2:end);
+azimuthDeg = azimuthDeg(2:end);
+zenithDeg   = elevationDeg(2:end);
 
 % Convert to Radians for flexibility
-p.thetaRad = p.thetaDeg.*(pi/180);
-p.phiRad   = p.phiDeg.*(pi/180);
+azimuthRad = azimuthDeg.*(pi/180);
+elevationRad   = elevationDeg.*(pi/180);
 end
