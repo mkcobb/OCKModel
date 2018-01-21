@@ -32,13 +32,9 @@ if ~exist('logsout','var')
 end
 clearvars tsc
 if p.verbose
-    fprintf('\nBuilding timeseries from simulation data.\n')
+    fprintf('\nParsing simulation output.\n')
 end
-tsc = dataset2TSC(logsout);
-if p.verbose
-    fprintf('\nExtracting iteration data from timeseries collection.\n')
-end
-iter = parseIterations(tsc,p);
+[tsc,iter]=parseOutput(logsout);
 if p.verbose
     readoutFaults
 end
@@ -52,7 +48,7 @@ if p.saveOnOff
     if p.verbose
         fprintf('\nSaving simulation data: %s\n',fileName)
     end
-    save([p.savePath fileName],'p','iter','windData','-v7.3')
+    save([p.savePath fileName],'p','iter','windData','tout','-v7.3')
 end
 
 if p.verbose

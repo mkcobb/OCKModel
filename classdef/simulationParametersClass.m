@@ -12,12 +12,13 @@ classdef simulationParametersClass < handle
         soundOnOff      = 1;
         
         % Simulation Switches
-        gravityOnOff        = 1; % 0 turns gravity off
-        windVariant         = 1; % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
-        turbulenceOnOff     = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
-        energyTermSwitch    = 2; % Which energy term to use in performance index 1 for mean energy, 2 for mean PAR
-        updateTypeSwitch    = 1; % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
-        persistentExcitationSwitch = 2; % 1 for sin and cos, 2 for white noise
+        gravityOnOff                = 1; % 0 turns gravity off
+        windVariant                 = 1; % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+        turbulenceOnOff             = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
+        energyTermSwitch            = 2; % Which energy term to use in performance index 1 for mean energy, 2 for mean PAR
+        updateTypeSwitch            = 1; % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
+        persistentExcitationSwitch  = 2; % 1 for sin and cos, 2 for white noise
+        controlEnergyTermSwitch     = 1; % 1 for moment-based control energy term, 2 for command-based control energy term
         
         % Optimization Settings
         numSettlingLaps         = 5;    % Must be at least 1 (I don't reccomend less than 3 though).
@@ -26,7 +27,8 @@ classdef simulationParametersClass < handle
         
         % Performance Index Weights
         energyTrackingWeight    = 400;  % Weight on spatial tracking when mean energy is used in performance index
-        PARTrackingWeight       = 400; % Weight on spatial tracking when mean PAR is used in performance index
+        PARTrackingWeight       = 400;  % Weight on spatial tracking when mean PAR is used in performance index
+        controlEnergyWeight     = 0;    % Weight on control energy term of performance index
         
         % RLS Settings
         forgettingFactor    = 0.98; % Forgetting factor used in RLS response surface update
