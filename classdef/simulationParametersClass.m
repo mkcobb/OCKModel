@@ -87,7 +87,7 @@ classdef simulationParametersClass < handle
         g               = 9.80665;   % Acceleration due to gravity
         
         % Initial Conditions
-        initVelocity      = 15; % Initial straight line speed (BFX direction)
+        initVelocity      = 28; % Initial straight line speed (BFX direction)
         initOmega         = 0;  % Initial twist rate
         
         % Actuator Rate Limiters
@@ -275,8 +275,16 @@ classdef simulationParametersClass < handle
         function val = get.initTwist(obj)
             % Give the system an initial heading to point it straight at the first
             % waypoint (approximately)
-            val = atan2((pi/180)*(obj.height*sin(obj.waypointAngles(1)).*cos(obj.waypointAngles(1))),...
-                (pi/180)*(obj.width/2)*cos(obj.waypointAngles(1))); % Initial twist angle
+%             val = atan2((pi/180)*(obj.height*sin(obj.waypointAngles(1)).*cos(obj.waypointAngles(1))),...
+%                 (pi/180)*(obj.width/2)*cos(obj.waypointAngles(1))); % Initial twist angle
+            
+            lat1 = (pi/2)-obj.initPositionGFS(3);
+            lon1 = obj.initPositionGFS(2);
+            lat2 = (pi/2)-obj.initialWaypointZeniths(1);
+            lon2 = obj.initialWaypointAzimuths(1);            % Inputs LAT1, LON1, LAT2, LON2 are in units of radians.
+            
+            val = (pi/2) - atan2(cos(lat2) .* sin(lon2-lon1),...
+                cos(lat1) .* sin(lat2) - sin(lat1) .* cos(lat2) .* cos(lon2-lon1));
         end
         function val = get.initPositionGFS(obj)
             val = [100 0  (obj.elev*pi/180)]; % Initial position in spherical coordinates
