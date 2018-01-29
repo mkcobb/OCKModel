@@ -58,6 +58,6 @@ if p.verbose
         sound(y,Fs)
     end
 end
-clearvars logsout
+% clearvars logsout
 
 

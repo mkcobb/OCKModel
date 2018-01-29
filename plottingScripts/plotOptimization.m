@@ -35,7 +35,7 @@ ylabel({'Mean PAR','Term'})
 set(gca,'FontSize',20)
 
 subplot(2,2,4)
-plot(iter.performanceIndexTrackingTerm(p.numSettlingLaps:end-1),...
+plot(iter.normalizedSpatialError(p.numSettlingLaps:end-1),...
     'LineWidth',1,'Marker','none','MarkerFaceColor','k','MarkerEdgeColor','k')
 addPhaseMarkers
 grid on
