@@ -36,7 +36,7 @@ if p.verbose
 end
 [tsc,iter]=parseOutput(logsout);
 if p.verbose
-    readoutFaults
+    readoutFaults(p,tsc,iter)
 end
 if p.plotsOnOff
     plotOptimization
