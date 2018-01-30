@@ -16,9 +16,9 @@ if ~isempty(logsout)
     iter.times      = currentIterationNumber.Time(iter.indices);
     
     for ii = 1:length(signalNames)
-        
+
         ts = get(logsout,signalNames{ii}); ts = ts.Values; % Get the single timeseries
-        
+
         % if the signal we're considering is one of the iterative elements,
         % then add it to the iter object, otherwise add it to the tsc
         % object

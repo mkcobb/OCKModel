@@ -1,4 +1,9 @@
 close all
+%% Plot Design Space Trajectory
+figure
+plot3(iter.basisParams(:,1)*(180/pi),iter.basisParams(:,2)*(180/pi),iter.performanceIndex)
+grid on
+
 %% Plot performance index
 figure
 subplot(2,2,1)
