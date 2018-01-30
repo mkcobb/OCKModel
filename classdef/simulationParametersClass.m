@@ -4,39 +4,63 @@ classdef simulationParametersClass < handle
         T = 2*60*60; % Total Simulation Time
         Ts = 0.002;  % Sample time
         
-        % Output Settings
+        % Output Settings (0 to turn off , 1 to turn on)
         verbose         = 1; % Text output to command window
         plotsOnOff      = 1; % Generate plots
         animationOnOff  = 0; % Generate animations
         saveOnOff       = 1; % Save data to the hard drive
-        soundOnOff      = 1;
+        soundOnOff      = 1; % Turn on/off gong noise at end of simulation
         
         % Simulation Switches
-        runMode                             = 1; % 1 to run in optimization mode, 2 to use when gridding design space
-        gravityOnOff                        = 1; % 0 turns gravity off
-        windVariant                         = 1; % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
-        turbulenceOnOff                     = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
-        energyTermSwitch                    = 2; % Which energy term to use in performance index 1 for mean energy, 2 for mean PAR
-        updateTypeSwitch                    = 1; % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
-        persistentExcitationSwitch          = 2; % 1 for sin and cos, 2 for white noise
-        controlEnergyTermSwitch             = 1; % 1 for moment-based control energy term, 2 for command-based control energy term
-        controlEnergyDerivativeTermSwitch   = 1; % 1 for moment-based control energy derivative term, 2 for command-based control energy derivative term
+        runMode     = 1; % 1 to run in optimization mode, 2 to use when gridding design space
+        decimation  = 10; % Log data every N points
+        modelName   = 'CDCJournalModel'; % Name of the model to run
         
-        % Optimization Settings
-        numSettlingLaps         = 5;    % Must be at least 1 (I don't reccomend less than 3 though).
-        numOptimizationLaps     = inf;  % Number of optimization iterations
-        numInitializationLaps   = 5;    % 5 or 9 point initialization
+        % Environmental Conditions Switches
+        gravityOnOff    = 1; % 0 turns gravity off
+        windVariant     = 1; % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+        vWind           = 7; % Mean wind speed (used when windVariant = 1)
+        windDirection   = 0; % Wind heading in degrees
+        turbulenceOnOff = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
+        windAltitude    = 146; % Must be one of the available altitudes from Dr. Archer's data
+        noiseSeeds      = [23341 23342 23343 23344];  % Noise seeds used in white noise generators for von Karman turbulence
+        rho             = 1.225;     % density of air kg/m^3
+        viscosity       = 1.4207E-5; % Kinematic viscosity of air (I think this is only used in Reynolds number calculation)
+        g               = 9.80665;   % Acceleration due to gravity
+        
+        % Performance Index Switches
+        switchME   = 0; % Switch that turns on/off the Mean Energy term in the performance index
+        switchPAR  = 1; % Switch that turns on/off the Power Augmentation Ratio term in the performance index
+        switchNSE  = 0; % Switch that turns on/off the Normalized Spatial Error term in the performance index
+        switchMSE  = 1; % Switch that turns on/off the Maximum Spatial Error term in the performance index
+        switchCCE  = 0; % Switch that turns on/off the Command-Based Control Energy term in the performance index
+        switchMCE  = 0; % Switch that turns on/off the Moment-BasedControl Energy term in the performance index
+        switchCDCE = 0; % Switch that turns on/off the Command Derivative-Based Control Energy term in the performance index
+        switchMDCE = 0; % Switch that turns on/off the Moment Derivative-Based Control Energy term in the performance index
         
         % Performance Index Weights
-        energyTrackingWeight    = 400;  % Weight on spatial tracking when mean energy is used in performance index
-        PARTrackingWeight       = 400;  % Weight on spatial tracking when mean PAR is used in performance index
-        controlEnergyWeight     = 0;    % Weight on control energy term of performance index
-        controlEnergyDerivativeWeight = 0; % Weight on control energy derivative term of performance index
+        weightME   = 1;     % Weight on Mean Energy in performance index
+        weightPAR  = 1;     % Weight on Power Augmentation Ratio in performance index
+        weightNSE  = 400;   % Weight on Normalized Spatial Error in performance index
+        weightMSE  = 150;   % Weight on Maximum Spatial Error in performance index
+        weightCCE  = 1;     % Weight on Command-Based Control Energy
+        weightMCE  = 1;     % Weight on Moment-Based Control Energy
+        weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
+        weightMDCE = 1;     % Weight on Moment Derivative-BAsed Control Energy
+
+        % Optimization Settings
+        updateTypeSwitch            = 1; % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
+        persistentExcitationSwitch  = 2; % 1 for sin and cos, 2 for white noise
+        numSettlingLaps             = 5;    % Must be at least 1 (I don't reccomend less than 3 though).
+        numOptimizationLaps         = inf;  % Number of optimization iterations
+        KLearningNewton             = .3; % ILC learning gain for Newton-based update
+        KLearningGradient           = .2; % ILC learning gain for gradient-based update
         
         % RLS Settings
-        forgettingFactor    = 0.98; % Forgetting factor used in RLS response surface update
-        azimuthOffset       = 3;    % degrees, initialization grid step size
-        zenithOffset        = 0.5;  % degrees, initialization grid step size
+        numInitializationLaps   = 5;    % 5 or 9 point initialization
+        forgettingFactor        = 0.98; % Forgetting factor used in RLS response surface update
+        azimuthOffset           = 3;    % degrees, initialization grid step size
+        zenithOffset            = 0.5;  % degrees, initialization grid step size
         
         % Persistent Excitation Settings
         azimuthPerturbationPeriod  = 4; % azimuth basis parameter amplitude
@@ -44,13 +68,9 @@ classdef simulationParametersClass < handle
         zenithPerturbationPeriod   = 4; % zenith basis parameter amiplitude
         zenithPerturbationGain     = 0.5; % zenith basis parameter period (not used in white noise implementation)
         
-        % ILC Learning Gains
-        KLearningNewton   = .3; % ILC learning gain for Newton-based update
-        KLearningGradient = .2; % ILC learning gain for gradient-based update
-        
         % Waypoints Settings
         ic      = 'userspecified'; % which set of initial conditions to use, narrow or wide
-        num     = 40; % number of waypoints
+        num     = 8; % number of waypoints
         elev    = 45; % mean course elevation
         waypointAzimuthTol = 1*(pi/180); % Tolerance which defines when a waypoint has been reached
         userWidth  = 80; % User specified width, only used if ic = 'UserSpecified' (case insensitive)
@@ -59,16 +79,7 @@ classdef simulationParametersClass < handle
         % Rudder Controller
         kr1  = 100; % Controller gain
         kr2  = 100; % Controller gain
-        tauR = 0.02;  % Ref model time const: 1/(tauR*s+1)^2
-        
-        % Wind parameters
-        vWind           = 7; % Mean wind speed (used when windVariant = 1)
-        windDirection   = 0; % Wind heading in degrees
-        windAltitude    = 146; % Must be one of the available altitudes from Dr. Archer's data
-        noiseSeeds      = [23341 23342 23343 23344];  % Noise seeds used in white noise generators for von Karman turbulence
-        
-        % Data Logging Parameters
-        decimation = 10; % Log data every N points
+        tauR = 0.05;  % Ref model time const: 1/(tauR*s+1)^2
         
         % Lifting Body
         mass      = 50; % Mass
@@ -80,11 +91,6 @@ classdef simulationParametersClass < handle
         wingSpan          = 5; % Wing span
         refLengthRudder   = 1.5; % Rudder reference length (chord)
         rudderSpan        = 4; % Rudder span
-        
-        % Environmental
-        rho             = 1.225;     % density of air kg/m^3
-        viscosity       = 1.4207E-5; % Kinematic viscosity of air
-        g               = 9.80665;   % Acceleration due to gravity
         
         % Initial Conditions
         initVelocity      = 28; % Initial straight line speed (BFX direction)
@@ -108,8 +114,6 @@ classdef simulationParametersClass < handle
         % Initial Course Geometry
         height                           % Initial course width
         width                            % Initial course height
-        
-        modelName = 'CDCJournalModel';
     end
     
     properties (Dependent)
