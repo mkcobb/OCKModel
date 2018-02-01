@@ -47,7 +47,7 @@ zlabel(axCCE,'CCE')
 saveas(hFig1,fullfile(filePath,sprintf('IndividualComponents_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
 
 hFig2 = figure;
-data = meanPAR-p.PARTrackingWeight*normalizedSpatialError;
+data = meanPAR-p.weightNSE*normalizedSpatialError;
 axPARNSE = surf(widths,heights,data);
 hold on
 [~,index] = max(data(:));
@@ -55,9 +55,9 @@ hMaxPointPARNSE = scatter3(widths(index),heights(index),data(index),'MarkerFaceC
 xlabel('W')
 ylabel('H')
 zlabel('PAR - K*NSE')
-title(sprintf('PAR - %d*NSE',p.PARTrackingWeight))
+title(sprintf('PAR - %d*NSE',p.weightNSE))
 
-saveas(hFig1,fullfile(filePath,sprintf('PARNSE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
+saveas(hFig2,fullfile(filePath,sprintf('PARNSE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
 
 hFig3 = figure;
 CCEWeight = 800;
@@ -71,7 +71,7 @@ ylabel('H')
 zlabel(sprintf('PAR - %d*CCE',CCEWeight))
 title(sprintf('PAR - %d*CCE',CCEWeight))
 
-saveas(hFig1,fullfile(filePath,sprintf('PARCCE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
+saveas(hFig3,fullfile(filePath,sprintf('PARCCE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
 
 hFig4 = figure;
 MCEWeight = 0.009;
@@ -85,7 +85,7 @@ ylabel('H')
 zlabel(sprintf('PAR - %d*MCE',MCEWeight))
 title(sprintf('PAR - %d*MCE',MCEWeight))
 
-saveas(hFig1,fullfile(filePath,sprintf('PARMCE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
+saveas(hFig4,fullfile(filePath,sprintf('PARMCE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
 
 hFig5 = figure;
 MSEWeight = 166;

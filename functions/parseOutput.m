@@ -1,19 +1,31 @@
 function [tsc,iter]=parseOutput(logsout)
 % function to convert dataset to timeseries collection and compile the iter struct
-
+tsc         = tscollection();   % Preallocate timeseries collection
+iter        = {};               % Preallocate iter structure
 if ~isempty(logsout)
    
-    tsc         = tscollection();   % Preallocate timeseries collection
-    iter        = {};               % Preallocate iter structure
+
     signalNames = getElementNames(logsout); % Get list of variables contained in logsout
     iterSignals = getIterationVariables;    % Get list of variables to store into the iter struct
     
     % Determine the iteration times and indices
-    currentIterationNumber = getElement(logsout,'currentIterationNumber');
-    currentIterationNumber = currentIterationNumber.Values;
-    genericIndices  = (1:length(currentIterationNumber.Time))';
-    iter.indices    = genericIndices(logical(diff(currentIterationNumber.Data)));
-    iter.times      = currentIterationNumber.Time(iter.indices);
+%     currentIterationNumber = getElement(logsout,'currentIterationNumber');
+%     currentIterationNumber = currentIterationNumber.Values;
+    waypointUpdateTrigger = getElement(logsout,'waypointUpdateTrigger');
+    waypointUpdateTrigger = waypointUpdateTrigger.Values;
+    performanceIndex = getElement(logsout,'performanceIndex');
+    performanceIndex = performanceIndex.Values;
+    
+    figure
+    ax1=subplot(2,1,1);
+    plot(waypointUpdateTrigger.data)
+    ax2=subplot(2,1,2);
+    plot(performanceIndex.data)
+    linkaxes([ax1 ax2],'x')
+%     
+    genericIndices  = (1:length(waypointUpdateTrigger.Time))';
+    iter.indices    = genericIndices(logical(waypointUpdateTrigger.Data));
+    iter.times      = waypointUpdateTrigger.Time(iter.indices);
     
     for ii = 1:length(signalNames)
 
@@ -23,7 +35,7 @@ if ~isempty(logsout)
         % then add it to the iter object, otherwise add it to the tsc
         % object
         if any(strcmp(iterSignals,signalNames{ii}))
-            if length(ts.Time) == length(currentIterationNumber.Time)
+            if length(ts.Time) == length(waypointUpdateTrigger.Time)
                 set(ts,'Time',ts.Time(iter.indices),'Data',ts.Data(iter.indices));
             end
             if ndims(ts.Data) == 3

@@ -1,7 +1,7 @@
 classdef simulationParametersClass < handle
     properties (SetObservable)
         % Simulation Time
-        T  = 2*60*60; % Total Simulation Time
+        T  = 1*60*60; % Total Simulation Time
         Ts = 0.002;  % Sample time
         
         % Output Settings (0 to turn off , 1 to turn on)
@@ -9,7 +9,7 @@ classdef simulationParametersClass < handle
         plotsOnOff      = 1; % Generate plots
         animationOnOff  = 0; % Generate animations
         saveOnOff       = 1; % Save data to the hard drive
-        soundOnOff      = 1; % Turn on/off gong noise at end of simulation
+        soundOnOff      = 0; % Turn on/off gong noise at end of simulation
         
         % Simulation Switches
         runMode     = 1; % 1 to run in optimization mode, 2 to use when gridding design space
@@ -31,8 +31,8 @@ classdef simulationParametersClass < handle
         % Performance Index Switches
         switchME   = 0; % Switch that turns on/off the Mean Energy term in the performance index
         switchPAR  = 1; % Switch that turns on/off the Power Augmentation Ratio term in the performance index
-        switchNSE  = 0; % Switch that turns on/off the Normalized Spatial Error term in the performance index
-        switchMSE  = 1; % Switch that turns on/off the Maximum Spatial Error term in the performance index
+        switchNSE  = 1; % Switch that turns on/off the Normalized Spatial Error term in the performance index
+        switchMSE  = 0; % Switch that turns on/off the Maximum Spatial Error term in the performance index
         switchCCE  = 0; % Switch that turns on/off the Command-Based Control Energy term in the performance index
         switchMCE  = 0; % Switch that turns on/off the Moment-BasedControl Energy term in the performance index
         switchCDCE = 0; % Switch that turns on/off the Command Derivative-Based Control Energy term in the performance index
@@ -49,29 +49,29 @@ classdef simulationParametersClass < handle
         weightMDCE = 1;     % Weight on Moment Derivative-BAsed Control Energy
 
         % Optimization Settings
-        updateTypeSwitch            = 1;    % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
+        updateTypeSwitch            = 2;    % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
         persistentExcitationSwitch  = 2;    % 1 for sin and cos, 2 for white noise
         numSettlingLaps             = 5;    % Must be at least 1 (I don't reccomend less than 3 though).
         numOptimizationLaps         = inf;  % Number of optimization iterations
         KLearningNewton             = .1;   % ILC learning gain for Newton-based update
-        KLearningGradient           = .1;   % ILC learning gain for gradient-based update
+        KLearningGradient           = 2;   % ILC learning gain for gradient-based update
         azimuthDistanceLim          = 4;    % Size of trust region
-        zenithDistanceLim           = 0.25; % Size of trust region
+        zenithDistanceLim           = 0.5; % Size of trust region
         
         % RLS Settings
         numInitializationLaps   = 5;    % 5 or 9 point initialization
-        forgettingFactor        = 0.99;    % Forgetting factor used in RLS response surface update
-        azimuthOffset           = 3;    % degrees, initialization grid step size
+        forgettingFactor        = 0.97;    % Forgetting factor used in RLS response surface update
+        azimuthOffset           = 1;    % degrees, initialization grid step size
         zenithOffset            = 0.5;  % degrees, initialization grid step size
         
         % Persistent Excitation Settings
-        azimuthPerturbationPeriod  = 4;    % azimuth basis parameter perturbation amplitude
-        zenithPerturbationPeriod   = 4;    % zenith basis parameter perturbation amplitude
-        azimuthPerturbationGain    = 0.5;  % azimuth basis parameter period (not used in white noise implementation)
-        zenithPerturbationGain     = 0.02; % zenith basis parameter period (not used in white noise implementation)
+        azimuthPerturbationPeriod  = 4;     % azimuth basis parameter perturbation amplitude
+        zenithPerturbationPeriod   = 4;     % zenith basis parameter perturbation amplitude
+        azimuthPerturbationGain    = 5;     % azimuth basis parameter period (not used in white noise implementation,cannot be zero)
+        zenithPerturbationGain     = 0.5;   % zenith basis parameter period (not used in white noise implementation,cannot be zero)
         
         % Waypoints Settings
-        ic                  = 'wide';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
+        ic                  = 'userspecified';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
         num                 = 8;            % number of waypoints
         elev                = 45;           % mean course elevation
         waypointAzimuthTol  = 1*(pi/180);   % Tolerance which defines when a waypoint has been reached
