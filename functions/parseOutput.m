@@ -9,23 +9,18 @@ if ~isempty(logsout)
     iterSignals = getIterationVariables;    % Get list of variables to store into the iter struct
     
     % Determine the iteration times and indices
-%     currentIterationNumber = getElement(logsout,'currentIterationNumber');
-%     currentIterationNumber = currentIterationNumber.Values;
-    waypointUpdateTrigger = getElement(logsout,'waypointUpdateTrigger');
-    waypointUpdateTrigger = waypointUpdateTrigger.Values;
-    performanceIndex = getElement(logsout,'performanceIndex');
-    performanceIndex = performanceIndex.Values;
-    
-    figure
-    ax1=subplot(2,1,1);
-    plot(waypointUpdateTrigger.data)
-    ax2=subplot(2,1,2);
-    plot(performanceIndex.data)
-    linkaxes([ax1 ax2],'x')
-%     
-    genericIndices  = (1:length(waypointUpdateTrigger.Time))';
-    iter.indices    = genericIndices(logical(waypointUpdateTrigger.Data));
-    iter.times      = waypointUpdateTrigger.Time(iter.indices);
+    % Note that the output of the performance index has a unit delay on it.
+    % Therefore the performance index at time step i is actually determined
+    % by the individual component values at time step i-1.
+    waypointUpdateTrigger   = getElement(logsout,'waypointUpdateTrigger');
+    waypointUpdateTrigger   = waypointUpdateTrigger.Values;
+    % waypointUpdateTrigger goes high on the first time step of a new
+    % iteration.
+    genericIndices          = (1:length(waypointUpdateTrigger.Time))'-1;
+    iter.endIndices         = genericIndices(logical(waypointUpdateTrigger.Data));
+    iter.startIndices       = iter.endIndices +1;
+    iter.endTimes           = waypointUpdateTrigger.Time(iter.endIndices);
+    iter.startTimes         = waypointUpdateTrigger.Time(iter.startIndices);
     
     for ii = 1:length(signalNames)
 
@@ -36,21 +31,29 @@ if ~isempty(logsout)
         % object
         if any(strcmp(iterSignals,signalNames{ii}))
             if length(ts.Time) == length(waypointUpdateTrigger.Time)
-                set(ts,'Time',ts.Time(iter.indices),'Data',ts.Data(iter.indices));
+                if strcmp(signalNames{ii},'performanceIndex')
+                    % If we're logging the actual performance index, then
+                    % we want the value one step later because of the
+                    % aforementioned unit delay
+                    set(ts,'Time',ts.Time(iter.startIndices),'Data',ts.Data(iter.startIndices));
+                else
+                    % If it's a component of the performance index then the
+                    % indices calculated above (iter.endIndices) are correct.
+                    set(ts,'Time',ts.Time(iter.endIndices),'Data',ts.Data(iter.endIndices));
+                end
             end
+            
             if ndims(ts.Data) == 3
                 iter.(ts.Name) = ts.data(:,:)';
             else
                 iter.(ts.Name) = ts.data;
             end
-            
-            
-
         else
             if length(ts.time) == 1 % Constant quantites have a different length data vector
                 set(ts,'Time',tsc.time,'Data',ts.data(1)*ones(size(tsc.time)));
             end
             tsc = addts(tsc,ts);
         end
+        
     end
 end

@@ -1,4 +1,6 @@
-close all;clear;clc;bdclose all;
+close all;
+% clear
+clc;bdclose all;
 filePath = fullfile(fileparts(fileparts(which(mfilename))),'gridResults');
 fileName = fullfile(filePath,'results_n_8.mat');
 
@@ -6,7 +8,7 @@ p = simulationParametersClass;
 
 load(fileName)
 
-% Plot all independently
+%% Plot Indidivdual Components
 hFig1  = figure;
 axPAR = subplot(2,2,1);
 hSurfPAR = surf(widths,heights,meanPAR);
@@ -46,6 +48,7 @@ zlabel(axCCE,'CCE')
 
 saveas(hFig1,fullfile(filePath,sprintf('IndividualComponents_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
 
+%% Plot PARNSE combination
 hFig2 = figure;
 data = meanPAR-p.weightNSE*normalizedSpatialError;
 axPARNSE = surf(widths,heights,data);
@@ -59,6 +62,22 @@ title(sprintf('PAR - %d*NSE',p.weightNSE))
 
 saveas(hFig2,fullfile(filePath,sprintf('PARNSE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
 
+%% Plot PARMSE Combination
+hFig5 = figure;
+MSEWeight = 166;
+data = meanPAR-MSEWeight*maxSpatialError;
+hold on
+[~,index] = max(data(:));
+hMaxPointPARMCE = scatter3(widths(index),heights(index),data(index),'MarkerFaceColor',[1 0 0],'MarkerEdgeColor',[1 0 0]);
+axPARMCE = surf(widths,heights,data);
+xlabel('W')
+ylabel('H')
+zlabel(sprintf('PAR - %d*MSE',MSEWeight))
+title(sprintf('PAR - %d*MSE',MSEWeight))
+
+saveas(hFig1,fullfile(filePath,sprintf('PARMSE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
+
+%% Plot PARCCE Combination
 hFig3 = figure;
 CCEWeight = 800;
 data = meanPAR-CCEWeight*commandBasedControlEnergy;
@@ -73,6 +92,7 @@ title(sprintf('PAR - %d*CCE',CCEWeight))
 
 saveas(hFig3,fullfile(filePath,sprintf('PARCCE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
 
+%% Plot PAR MCE Combination
 hFig4 = figure;
 MCEWeight = 0.009;
 data = meanPAR-MCEWeight*momentBasedControlEnergy;
@@ -87,16 +107,4 @@ title(sprintf('PAR - %d*MCE',MCEWeight))
 
 saveas(hFig4,fullfile(filePath,sprintf('PARMCE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
 
-hFig5 = figure;
-MSEWeight = 166;
-data = meanPAR-MSEWeight*maxSpatialError;
-hold on
-[~,index] = max(data(:));
-hMaxPointPARMCE = scatter3(widths(index),heights(index),data(index),'MarkerFaceColor',[1 0 0],'MarkerEdgeColor',[1 0 0]);
-axPARMCE = surf(widths,heights,data);
-xlabel('W')
-ylabel('H')
-zlabel(sprintf('PAR - %d*MSE',MSEWeight))
-title(sprintf('PAR - %d*MSE',MSEWeight))
 
-saveas(hFig1,fullfile(filePath,sprintf('PARMSE_n_%d_tauR_%.3f.fig',p.num,p.tauR)))
