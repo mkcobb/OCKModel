@@ -7,6 +7,7 @@ wingRudder = lower(wingRudder);
 files = dir(fullfile(pwd,wingRudder));
 if ispc
     [~,~,data]=xlsread(fullfile(pwd,wingRudder,files(3).name));
+    aeroTable.fileName = files(3).name;
     aeroTable.Re = data{4,2};
     jj=1;
     while ~strcmpi(data{jj,1},'alpha')
