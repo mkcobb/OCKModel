@@ -71,11 +71,11 @@ classdef simulationParametersClass < handle
         zenithPerturbationGain     = 0.5;   % zenith basis parameter period (not used in white noise implementation,cannot be zero)
         
         % Waypoints Settings
-        ic                  = 'userspecified';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
-        num                 = 8;            % number of waypoints
+        ic                  = 'wide';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
+        num                 = 10^2;         % number of angles used to parameterize the path
         elev                = 45;           % mean course elevation
-        waypointAzimuthTol  = 1*(pi/180);   % Tolerance which defines when a waypoint has been reached
-
+        lookAheadPercent    = 0.5;          % percentage of total path length
+        
         % Rudder Controller
         kr1  = 100; % Controller gain
         kr2  = 100; % Controller gain
@@ -140,10 +140,15 @@ classdef simulationParametersClass < handle
         initialWaypointAzimuths          % Initial vector of waypoint azimuths
         initialWaypointZeniths           % Initial vector of waypoint zeniths
         waypointToleranceArcLength       % Length of arch used to normalize the spatial tracking error term
+        lookAheadIndexOffset             % Angular distance to look ahead for the path following.
     end
     
     methods
         % Functions to set up the model configuration parameters
+        function val = get.lookAheadIndexOffset(obj)
+            val = round(obj.num*obj.lookAheadPercent);
+        end
+        
         function obj = set.runMode(obj,value)
             obj.runMode = value;
             switch value
@@ -162,17 +167,17 @@ classdef simulationParametersClass < handle
             set_param(obj.modelName,'LoggingFileName','out.mat');
         end
         
-        function val = get.waypointToleranceArcLength(obj)
-            lat1 = 0;
-            lon1 = 0;
-            lat2 = obj.waypointZenithTol;
-            lon2 = obj.waypointAzimuthTol;
-            a = sin((lat2-lat1)/2).^2 + cos(lat1) .* cos(lat2) .* sin((lon2-lon1)/2).^2;
-            % Ensure that a falls in the closed interval [0 1].
-            a(a < 0) = 0;
-            a(a > 1) = 1;
-            val = obj.initPositionGFS(1) * 2 * atan2(sqrt(a),sqrt(1 - a));
-        end
+%         function val = get.waypointToleranceArcLength(obj)
+%             lat1 = 0;
+%             lon1 = 0;
+%             lat2 = obj.waypointZenithTol;
+%             lon2 = obj.waypointAzimuthTol;
+%             a = sin((lat2-lat1)/2).^2 + cos(lat1) .* cos(lat2) .* sin((lon2-lon1)/2).^2;
+%             % Ensure that a falls in the closed interval [0 1].
+%             a(a < 0) = 0;
+%             a(a > 1) = 1;
+%             val = obj.initPositionGFS(1) * 2 * atan2(sqrt(a),sqrt(1 - a));
+%         end
         
         % Functions to initialize the waypoints
         function set.height(obj,value)
@@ -210,17 +215,17 @@ classdef simulationParametersClass < handle
             end
         end
         function val = get.waypointAngles(obj)
-            val = linspace((3/2)*pi,(3/2)*pi+2*pi,obj.num+1);
-            val = val(2:end);
+            val = linspace((3/2)*pi,(3/2)*pi+2*pi,obj.num);
+%             val = val(2:end);
         end
-        function val = get.initialWaypointAzimuths(obj)
-           psi = obj.waypointAngles;
-           val = (pi/180)*(obj.width/2)*cos(psi);
-        end
-        function val = get.initialWaypointZeniths(obj)
-           psi = obj.waypointAngles;
-           val = -1*(pi/180)*obj.height*sin(psi).*cos(psi)+obj.elev*(pi/180);
-        end
+%         function val = get.initialWaypointAzimuths(obj)
+%            psi = obj.waypointAngles;
+%            val = (pi/180)*(obj.width/2)*cos(psi);
+%         end
+%         function val = get.initialWaypointZeniths(obj)
+%            psi = obj.waypointAngles;
+%            val = -1*(pi/180)*obj.height*sin(psi).*cos(psi)+obj.elev*(pi/180);
+%         end
         
         % Functions for saving data
         function val = get.savePath(obj)
@@ -275,18 +280,7 @@ classdef simulationParametersClass < handle
             end
         end
         function val = get.initTwist(obj)
-            % Give the system an initial heading to point it straight at the first
-            % waypoint (approximately)
-%             val = atan2((pi/180)*(obj.height*sin(obj.waypointAngles(1)).*cos(obj.waypointAngles(1))),...
-%                 (pi/180)*(obj.width/2)*cos(obj.waypointAngles(1))); % Initial twist angle
-            
-            lat1 = (pi/2)-obj.initPositionGFS(3);
-            lon1 = obj.initPositionGFS(2);
-            lat2 = (pi/2)-obj.initialWaypointZeniths(1);
-            lon2 = obj.initialWaypointAzimuths(1);            % Inputs LAT1, LON1, LAT2, LON2 are in units of radians.
-            
-            val = (pi/2) - atan2(cos(lat2) .* sin(lon2-lon1),...
-                cos(lat1) .* sin(lat2) - sin(lat1) .* cos(lat2) .* cos(lon2-lon1));
+           val = atan2(-obj.height,obj.width/2);
         end
         function val = get.initPositionGFS(obj)
             val = [100 0  (obj.elev*pi/180)]; % Initial position in spherical coordinates
