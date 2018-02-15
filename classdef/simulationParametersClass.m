@@ -72,9 +72,9 @@ classdef simulationParametersClass < handle
         
         % Waypoints Settings
         ic                  = 'wide';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
-        num                 = 10^2;         % number of angles used to parameterize the path
+        num                 = 10^3;         % number of angles used to parameterize the path
         elev                = 45;           % mean course elevation
-        lookAheadPercent    = 0.5;          % percentage of total path length
+        lookAheadPercent    = 0.1;          % percentage of total path length
         
         % Rudder Controller
         kr1  = 100; % Controller gain
@@ -140,13 +140,13 @@ classdef simulationParametersClass < handle
         initialWaypointAzimuths          % Initial vector of waypoint azimuths
         initialWaypointZeniths           % Initial vector of waypoint zeniths
         waypointToleranceArcLength       % Length of arch used to normalize the spatial tracking error term
-        lookAheadIndexOffset             % Angular distance to look ahead for the path following.
+        lookAheadIndexOffsetVector       % Angular distance to look ahead for the path following.
     end
     
     methods
         % Functions to set up the model configuration parameters
-        function val = get.lookAheadIndexOffset(obj)
-            val = round(obj.num*obj.lookAheadPercent);
+        function val = get.lookAheadIndexOffsetVector(obj)
+            val = [-round(obj.num*obj.lookAheadPercent):round(obj.num*obj.lookAheadPercent)];
         end
         
         function obj = set.runMode(obj,value)
