@@ -31,8 +31,7 @@ classdef simulationParametersClass < handle
         % Performance Index Switches
         switchME   = 0; % Switch that turns on/off the Mean Energy term in the performance index
         switchPAR  = 1; % Switch that turns on/off the Power Augmentation Ratio term in the performance index
-        switchNSE  = 1; % Switch that turns on/off the Normalized Spatial Error term in the performance index
-        switchMSE  = 0; % Switch that turns on/off the Maximum Spatial Error term in the performance index
+        switchSE   = 1; % Switch that turns on/off the Spatial Error term in the performance index
         switchCCE  = 0; % Switch that turns on/off the Command-Based Control Energy term in the performance index
         switchMCE  = 0; % Switch that turns on/off the Moment-BasedControl Energy term in the performance index
         switchCDCE = 0; % Switch that turns on/off the Command Derivative-Based Control Energy term in the performance index
@@ -41,8 +40,7 @@ classdef simulationParametersClass < handle
         % Performance Index Weights
         weightME   = 1;     % Weight on Mean Energy in performance index
         weightPAR  = 1;     % Weight on Power Augmentation Ratio in performance index
-        weightNSE  = 400;   % Weight on Normalized Spatial Error in performance index
-        weightMSE  = 100;   % Weight on Maximum Spatial Error in performance index
+        weightSE   = 400;   % Weight on Spatial Error in performance index
         weightCCE  = 1;     % Weight on Command-Based Control Energy
         weightMCE  = 1;     % Weight on Moment-Based Control Energy
         weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
@@ -74,7 +72,8 @@ classdef simulationParametersClass < handle
         ic                  = 'wide';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
         num                 = 10^3;         % number of angles used to parameterize the path
         elev                = 45;           % mean course elevation
-        lookAheadPercent    = 0.1;          % percentage of total path length
+        lookAheadPercent    = 0.025;          % percentage of total path length that the carrot is ahead
+        localSearchPercent  = 0.05;          % percentage of the course to search for the closest point on the path, centered on previous closest point.
         
         % Rudder Controller
         kr1  = 100; % Controller gain
@@ -116,7 +115,6 @@ classdef simulationParametersClass < handle
     end
     
     properties (Dependent)
-
         refAreaWing                      % Wing reference area
         refAreaRudder                    % Rudder reference area
         J                                % Moment inertia about body fixe z axis
@@ -131,8 +129,6 @@ classdef simulationParametersClass < handle
         wingTable                        % Aerodynamic table for the main wing
         rudderTable                      % Aerodynamic table for the rudder
         useablePower                     % Useable power for this design, defined from wikipedia
-%         azimuthDistanceLim               % Trust region for optimization update on azimuth basis param
-%         zenithDistanceLim                % Trust region for optimization update on zenith basis param
         initPositionGFS                  % Initial position in ground fixed spherical coordinates
         saveFile                         % File name of the resulting data file
         savePath                         % Path to the resulting data file
@@ -140,13 +136,17 @@ classdef simulationParametersClass < handle
         initialWaypointAzimuths          % Initial vector of waypoint azimuths
         initialWaypointZeniths           % Initial vector of waypoint zeniths
         waypointToleranceArcLength       % Length of arch used to normalize the spatial tracking error term
-        lookAheadIndexOffsetVector       % Angular distance to look ahead for the path following.
+        localSearchIndexOffsetVector     % Angular distance to look ahead for the path following.
+        lookAheadIndexOffset             % Number of indices ahead that the carrot is
     end
     
     methods
         % Functions to set up the model configuration parameters
-        function val = get.lookAheadIndexOffsetVector(obj)
-            val = [-round(obj.num*obj.lookAheadPercent):round(obj.num*obj.lookAheadPercent)];
+        function val = get.lookAheadIndexOffset(obj)
+            val = round(obj.num*obj.lookAheadPercent);
+        end
+        function val = get.localSearchIndexOffsetVector(obj)
+            val = -round(obj.num*obj.localSearchPercent):round(obj.num*obj.localSearchPercent);
         end
         
         function obj = set.runMode(obj,value)

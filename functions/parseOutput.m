@@ -47,7 +47,10 @@ if ~isempty(logsout)
             if ndims(ts.Data) == 3
                 iter.(ts.Name) = ts.data(:,:)';
             else
+                try
                 iter.(ts.Name) = ts.data;
+                catch
+                end
             end
         else
             if length(ts.time) == 1 % Constant quantites have a different length data vector
