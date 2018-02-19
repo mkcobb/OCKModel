@@ -34,12 +34,18 @@ clearvars tsc
 if p.verbose
     fprintf('\nParsing simulation output.\n')
 end
-[tsc,iter]=parseOutput(logsout);
+
+[tsc,iter] = parseOutput(logsout);
+
 if p.verbose
     readoutFaults(p,tsc,iter)
 end
 if p.plotsOnOff
-    plotOptimization
+    try
+        plotOptimization
+    catch
+        fprintf(sprintf('%s\n',lasterr));
+    end
 end
 
 % Save data

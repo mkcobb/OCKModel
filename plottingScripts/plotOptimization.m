@@ -4,7 +4,7 @@ close all
 %% Plot Design Space Trajectory
 figure
 hax=gca;
-plot3(iter.basisParams(:,1)*(180/pi),iter.basisParams(:,2)*(180/pi),iter.performanceIndex)
+% plot3(iter.basisParams(:,1)*(180/pi),iter.basisParams(:,2)*(180/pi),iter.performanceIndex)
 grid on
 hold on
 
@@ -13,14 +13,10 @@ filePath = fullfile(fileparts(fileparts(which(mfilename))),'gridResults');
 fileName = fullfile(filePath,'results_n_8.mat');
 load(fileName,'widths','heights','meanPAR','maxSpatialError','normalizedSpatialError')
 
-if p.switchMSE
-    zData = meanPAR - p.weightMSE*maxSpatialError;
-    surf(widths,heights,zData,'Parent',hax);
-    
-elseif p.switchNSE
-    zData = meanPAR - p.weightNSE*normalizedSpatialError;
-    surf(widths,heights,zData,'Parent',hax)
-end
+
+zData = iter.meanPAR - p.weightSE*iter.spatialError;
+surf(widths,heights,zData,'Parent',hax);
+
 
 widths  = linspace(min(iter.basisParams(:,1)),max(iter.basisParams(:,1)),100);
 heights = linspace(min(iter.basisParams(:,2)),max(iter.basisParams(:,2)),100);

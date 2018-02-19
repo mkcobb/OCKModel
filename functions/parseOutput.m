@@ -3,8 +3,8 @@ function [tsc,iter]=parseOutput(logsout)
 tsc         = tscollection();   % Preallocate timeseries collection
 iter        = {};               % Preallocate iter structure
 if ~isempty(logsout)
-   
-
+    
+    
     signalNames = getElementNames(logsout); % Get list of variables contained in logsout
     iterSignals = getIterationVariables;    % Get list of variables to store into the iter struct
     
@@ -23,14 +23,20 @@ if ~isempty(logsout)
     iter.startTimes         = waypointUpdateTrigger.Time(iter.startIndices);
     
     for ii = 1:length(signalNames)
-        
-            ts = get(logsout,signalNames{ii}); ts = ts.Values; % Get the single timeseries
 
-        
+        ts = get(logsout,signalNames{ii}); ts = ts.Values; % Get the single timeseries
+
         % if the signal we're considering is one of the iterative elements,
         % then add it to the iter object, otherwise add it to the tsc
         % object
         if any(strcmp(iterSignals,signalNames{ii}))
+             if length(ts.time) == 1 % Constant quantites have a different length data vector
+                set(ts,'Time',tsc.time,'Data',repmat(ts.data(1),[length(tsc.time),1]));
+            end
+            try
+            tsc = addts(tsc,ts);
+            catch
+            end
             if length(ts.Time) == length(waypointUpdateTrigger.Time)
                 if strcmp(signalNames{ii},'performanceIndex')
                     % If we're logging the actual performance index, then
@@ -48,7 +54,7 @@ if ~isempty(logsout)
                 iter.(ts.Name) = ts.data(:,:)';
             else
                 try
-                iter.(ts.Name) = ts.data;
+                    iter.(ts.Name) = ts.data;
                 catch
                 end
             end
@@ -56,7 +62,11 @@ if ~isempty(logsout)
             if length(ts.time) == 1 % Constant quantites have a different length data vector
                 set(ts,'Time',tsc.time,'Data',ts.data(1)*ones(size(tsc.time)));
             end
-            tsc = addts(tsc,ts);
+            try
+                % Add the timeseries to the collection
+                tsc = addts(tsc,ts);
+            catch
+            end
         end
         
     end

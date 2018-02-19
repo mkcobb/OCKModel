@@ -40,7 +40,7 @@ classdef simulationParametersClass < handle
         % Performance Index Weights
         weightME   = 1;     % Weight on Mean Energy in performance index
         weightPAR  = 1;     % Weight on Power Augmentation Ratio in performance index
-        weightSE   = 400;   % Weight on Spatial Error in performance index
+        weightSE   = 40;    % Weight on Spatial Error in performance index
         weightCCE  = 1;     % Weight on Command-Based Control Energy
         weightMCE  = 1;     % Weight on Moment-Based Control Energy
         weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
@@ -101,14 +101,14 @@ classdef simulationParametersClass < handle
         
         % Airfoil lift/drag coefficient fitting limits
         % Defines the range of angles of attack over which we fit a line
-        wingClStartAlpha = -0.1;
-        wingClEndAlpha   = 0.1;
-        wingCdStartAlpha = -0.1;
-        wingCdEndAlpha   = 0.1;
-        rudderClStartAlpha = -0.1;
-        rudderClEndAlpha   = 0.1;
-        rudderCdStartAlpha = -0.1;
-        rudderCdEndAlpha   = 0.1;
+        wingClStartAlpha    = -0.1;
+        wingClEndAlpha      = 0.1;
+        wingCdStartAlpha    = -0.1;
+        wingCdEndAlpha      = 0.1;
+        rudderClStartAlpha  = -0.1;
+        rudderClEndAlpha    = 0.1;
+        rudderCdStartAlpha  = -0.1;
+        rudderCdEndAlpha    = 0.1;
         
         height                           % Initial course width
         width                            % Initial course height
