@@ -1,8 +1,11 @@
-function animateSingleLap(lapNumber,p,tsc,filePath)
+function animateSingleLap(lapNumber,frameRate)
+p = evalin('base','p');
+tsc = evalin('base','tsc');
+filePath = fileparts(fileparts(which(mfilename)));
 fileName = sprintf('lap_%s_%s',num2str(lapNumber),datestr(now,'ddmmyyyy_hhMMss'));
 animtationFilePath = fullfile(filePath,'animations',[fileName,'.gif']);
 videoFilePath = fullfile(filePath,'animations',fileName);
-frameRate = 1/0.002;
+% frameRate = 30;
 
 times = tsc.time(tsc.currentIterationNumber.data == lapNumber);
 
@@ -14,9 +17,9 @@ sphereY = p.initPositionGFS(1)*sphereY;
 sphereZ = p.initPositionGFS(1)*sphereZ;
 
 if size(get(groot,'MonitorPositions'),1)>1
-    h.fig = figure('units','normalized','position',[-1 0 1 0.95]);
+    h.fig = figure('units','normalized','position',[-1 0 1 0.9]);
 else
-    h.fig = figure('units','normalized','position',[0 0 1 0.95]);
+    h.fig = figure('units','normalized','position',[0 0 1 0.9]);
 end
 % h.ax = h.fig.Children;
 % h.ax.Position = [0 0.025 1 0.95];
@@ -25,8 +28,6 @@ h.sphere = surf(sphereX,sphereY,sphereZ,...
     'EdgeColor','none','FaceAlpha',0.25);
 hold on
 set(h.sphere,'FaceColor',[0 0 0])
-
-
 
 basisParams = (180/pi)*tsc.basisParams.data(1,:);
 
@@ -45,7 +46,7 @@ zlim([min(pathZ) max(pathZ)])
 view(60,30)
 
 
-tsc = resample(tsc,0:1/frameRate:tsc.time(end));
+tsc = resample(tsc,tsc.time(1):1/frameRate:tsc.time(end));
 targetWaypoints    = tsc.targetWaypoint.data;
 targetWaypointsGFS = [p.initPositionGFS(1)*ones(size(targetWaypoints(:,1))) targetWaypoints];
 [targetWaypointsX,targetWaypointsY,targetWaypointsZ] = ...
