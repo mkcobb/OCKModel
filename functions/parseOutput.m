@@ -23,18 +23,18 @@ if ~isempty(logsout)
     iter.startTimes         = waypointUpdateTrigger.Time(iter.startIndices);
     
     for ii = 1:length(signalNames)
-
+        
         ts = get(logsout,signalNames{ii}); ts = ts.Values; % Get the single timeseries
 
         % if the signal we're considering is one of the iterative elements,
         % then add it to the iter object, otherwise add it to the tsc
         % object
         if any(strcmp(iterSignals,signalNames{ii}))
-             if length(ts.time) == 1 % Constant quantites have a different length data vector
+            if length(ts.time) == 1 % Constant quantites have a different length data vector
                 set(ts,'Time',tsc.time,'Data',repmat(ts.data(1),[length(tsc.time),1]));
             end
             try
-            tsc = addts(tsc,ts);
+                tsc = addts(tsc,ts);
             catch
             end
             if length(ts.Time) == length(waypointUpdateTrigger.Time)
@@ -46,7 +46,7 @@ if ~isempty(logsout)
                 else
                     % If it's a component of the performance index then the
                     % indices calculated above (iter.endIndices) are correct.
-                    set(ts,'Time',ts.Time(iter.endIndices),'Data',ts.Data(iter.endIndices));
+                    set(ts,'Time',ts.Time(iter.endIndices),'Data',ts.Data(iter.endIndices,:));
                 end
             end
             

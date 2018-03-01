@@ -15,16 +15,39 @@ else
 end
 
 
-ax1=subplot(3,1,1);
+h.ax1 = subplot(3,2,1);
 h.heading  = plot(tsc.heading,'DisplayName','Heading');
-hold on
 grid on
-ax2=subplot(3,1,2);
+set(gca,'FontSize',24)
+
+h.ax2 = subplot(3,2,3);
 h.desired  = plot(tsc.headingDes,'DisplayName','Desired');
 grid on
-ax3=subplot(3,1,3);
+set(gca,'FontSize',24)
+
+h.ax3 = subplot(3,2,5);
 h.setpoint = plot(tsc.headingSetpoint,'DisplayName','Setpoint');
 grid on
 legend
 set(gca,'FontSize',24)
-linkaxes([ax1 ax2 ax3],'x')
+
+
+h.ax4 = subplot(3,2,2);
+h.setpoint = plot(tsc.headingDes,'DisplayName','Setpoint');
+grid on
+legend
+set(gca,'FontSize',24)
+
+h.ax5 = subplot(3,2,4);
+h.setpoint = plot(tsc.headingDesDot,'DisplayName','Setpoint');
+grid on
+legend
+set(gca,'FontSize',24)
+
+h.ax6 = subplot(3,2,6);
+h.setpoint = plot(tsc.headingDesDDot,'DisplayName','Setpoint');
+grid on
+legend
+set(gca,'FontSize',24)
+
+linkaxes([h.ax1 h.ax2 h.ax3 h.ax4 h.ax5 h.ax6],'x')

@@ -1,5 +1,5 @@
 classdef simulationParametersClass < handle
-    properties (SetObservable)
+    properties
         % Simulation Time
         T  = 1*60*60; % Total Simulation Time
         Ts = 0.002;  % Sample time
@@ -12,13 +12,13 @@ classdef simulationParametersClass < handle
         soundOnOff      = 0; % Turn on/off gong noise at end of simulation
         
         % Simulation Switches
-        runMode     = 1; % 1 to run in optimization mode, 2 to use when gridding design space
+        runMode     = 'baseline'; % 'optimization','baseline' or 'grid'
         decimation  = 10; % Log data every N points
         modelName   = 'CDCJournalModel'; % Name of the model to run
         
         % Environmental Conditions Switches
         gravityOnOff    = 1; % 0 turns gravity off
-        windVariant     = 1; % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+        
         vWind           = 7; % Mean wind speed (used when windVariant = 1)
         windDirection   = 0; % Wind heading in degrees
         turbulenceOnOff = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
@@ -45,12 +45,11 @@ classdef simulationParametersClass < handle
         weightMCE  = 1;     % Weight on Moment-Based Control Energy
         weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
         weightMDCE = 1;     % Weight on Moment Derivative-BAsed Control Energy
-
+        
         % Optimization Settings
         updateTypeSwitch            = 2;    % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
         persistentExcitationSwitch  = 2;    % 1 for sin and cos, 2 for white noise
-        numSettlingLaps             = 5;    % Must be at least 1 (I don't reccomend less than 3 though).
-        numOptimizationLaps         = inf;  % Number of optimization iterations
+        
         KLearningNewton             = .1;   % ILC learning gain for Newton-based update
         KLearningGradient           = 2;   % ILC learning gain for gradient-based update
         azimuthDistanceLim          = 4;    % Size of trust region
@@ -78,7 +77,7 @@ classdef simulationParametersClass < handle
         % Rudder Controller
         kr1  = 100; % Controller gain
         kr2  = 100; % Controller gain
-        tauR = 0.05;  % Ref model time const: 1/(tauR*s+1)^2
+        tauR = 0.1;  % Ref model time const: 1/(tauR*s+1)^2
         
         % Lifting Body Physical Parameters
         mass      = 50; % Mass
@@ -110,15 +109,21 @@ classdef simulationParametersClass < handle
         rudderCdStartAlpha  = -0.1;
         rudderCdEndAlpha    = 0.1;
         
+        iterationChangeDeadband 
+    end
+    properties (Dependent = false) % Property value is not stored in object
+        
+    end
+    properties (Dependent = false) % Property value is stored in object
+        runModeSwitch                    % Switch used in simulation to determine what data gets passed
+        numSettlingLaps                  % Must be at least 1 (I don't reccomend less than 3 though).
+        numOptimizationLaps              % Number of optimization iterations
         height                           % Initial course width
         width                            % Initial course height
-    end
-    
-    properties (Dependent)
+        windVariant                      % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
         refAreaWing                      % Wing reference area
         refAreaRudder                    % Rudder reference area
         J                                % Moment inertia about body fixe z axis
-        waypointZenithTol                % Waypoint zenith reached tolerance
         waypointAngles                   % Parametric angles which define waypoints
         azimuthInitializationDirections  % Defines the grid of initialization points
         zenithInitializationDirections   % Defines the grid of initialization points
@@ -133,59 +138,77 @@ classdef simulationParametersClass < handle
         saveFile                         % File name of the resulting data file
         savePath                         % Path to the resulting data file
         windVariantName                  % String describing the wind variant
-        initialWaypointAzimuths          % Initial vector of waypoint azimuths
-        initialWaypointZeniths           % Initial vector of waypoint zeniths
-        waypointToleranceArcLength       % Length of arch used to normalize the spatial tracking error term
         localSearchIndexOffsetVector     % Angular distance to look ahead for the path following.
         lookAheadIndexOffset             % Number of indices ahead that the carrot is
+        firstOptimizationIterationNum    % Have to calculate this because the if block doesn't accept "+" operator
     end
     
     methods
+        function val = get.firstOptimizationIterationNum(obj)
+            val = obj.numInitializationLaps+obj.numSettlingLaps+1;
+        end
         % Functions to set up the model configuration parameters
         function val = get.lookAheadIndexOffset(obj)
             val = round(obj.num*obj.lookAheadPercent);
         end
         function val = get.localSearchIndexOffsetVector(obj)
-            val = -round(obj.num*obj.localSearchPercent):round(obj.num*obj.localSearchPercent);
+%             val = -round(obj.num*obj.localSearchPercent):round(obj.num*obj.localSearchPercent);
+            val = 0:round(obj.num*obj.localSearchPercent);
         end
         
-        function obj = set.runMode(obj,value)
-            obj.runMode = value;
-            switch value
-                case 1 
-                    % turn off logging to RAM for optimization mode
-                    set_param(obj.modelName,'SignalLogging','off');
-                    % turn on logging to hard drive for optimization mode
-                    set_param(obj.modelName,'LoggingToFile','on');
-                case 2 
-                    % turn on logging to RAM for grid mode
-                    set_param(obj.modelName,'SignalLogging','on');
-                    % turn off logging to hard drive for grid mode
-                    set_param(obj.modelName,'LoggingToFile','off');
+        function val = get.runModeSwitch(obj)
+            switch lower(obj.runMode)
+                case 'grid'
+                    val = 2;
+                otherwise
+                    val = 1;
             end
-            set_param(obj.modelName,'SignalLoggingName','logsout');
-            set_param(obj.modelName,'LoggingFileName','out.mat');
         end
         
-%         function val = get.waypointToleranceArcLength(obj)
-%             lat1 = 0;
-%             lon1 = 0;
-%             lat2 = obj.waypointZenithTol;
-%             lon2 = obj.waypointAzimuthTol;
-%             a = sin((lat2-lat1)/2).^2 + cos(lat1) .* cos(lat2) .* sin((lon2-lon1)/2).^2;
-%             % Ensure that a falls in the closed interval [0 1].
-%             a(a < 0) = 0;
-%             a(a > 1) = 1;
-%             val = obj.initPositionGFS(1) * 2 * atan2(sqrt(a),sqrt(1 - a));
-%         end
+        function val = get.numSettlingLaps(obj)
+            switch lower(obj.runMode)
+                case 'baseline'
+                    val = inf;
+                case 'optimization'
+                    val = 5;
+                case 'grid'
+                    val = 10;
+                otherwise
+                    val = 5;
+            end
+        end
+        
+        function val = get.numOptimizationLaps(obj)
+            switch lower(obj.runMode)
+                case 'baseline'
+                    val = 0;
+                case 'optimization'
+                    val = inf;
+                case 'grid'
+                    val = 0;
+                otherwise
+                    val = 0;
+            end
+        end
+        
+        function val = get.numInitializationLaps(obj)
+            val = 5;
+        end
+        
+        function val = get.windVariant(obj)
+            switch lower(obj.runMode)
+                case 'baseline'
+                    val = 3;
+                case 'optimization'
+                    val = 3;
+                case 'grid'
+                    val = 1;
+                otherwise
+                    val = 1;
+            end
+        end
         
         % Functions to initialize the waypoints
-        function set.height(obj,value)
-            obj.height = value;
-        end
-        function set.width(obj,value)
-            obj.width = value;
-        end
         function val = get.height(obj)
             switch lower(obj.ic)
                 case 'both'
@@ -194,8 +217,6 @@ classdef simulationParametersClass < handle
                     val = 12;
                 case 'short'
                     val = 6.5;
-                case 'userspecified'
-                    val = obj.height;
                 otherwise
                     val = obj.height;
             end
@@ -208,24 +229,14 @@ classdef simulationParametersClass < handle
                     val = 100;
                 case 'short'
                     val = 60;
-                case 'userspecified'
-                    val = obj.width;
                 otherwise
                     val = obj.width;
             end
         end
         function val = get.waypointAngles(obj)
-            val = linspace((3/2)*pi,(3/2)*pi+2*pi,obj.num);
-%             val = val(2:end);
+            angles = linspace((3/2)*pi,(3/2)*pi+2*pi,obj.num+1);
+            val = angles(1:end-1);
         end
-%         function val = get.initialWaypointAzimuths(obj)
-%            psi = obj.waypointAngles;
-%            val = (pi/180)*(obj.width/2)*cos(psi);
-%         end
-%         function val = get.initialWaypointZeniths(obj)
-%            psi = obj.waypointAngles;
-%            val = -1*(pi/180)*obj.height*sin(psi).*cos(psi)+obj.elev*(pi/180);
-%         end
         
         % Functions for saving data
         function val = get.savePath(obj)
@@ -233,14 +244,14 @@ classdef simulationParametersClass < handle
         end
         
         function val = get.windVariantName(obj)
-           switch obj.windVariant
-               case 1
-                   val = 'Constant';
-               case 2
-                   val = 'VonKarman';
-               case 3
-                   val = 'NREL';
-           end
+            switch obj.windVariant
+                case 1
+                    val = 'Constant';
+                case 2
+                    val = 'Archer';
+                case 3
+                    val = 'NREL';
+            end
         end
         function val = get.saveFile(obj)
             switch obj.updateTypeSwitch
@@ -249,7 +260,7 @@ classdef simulationParametersClass < handle
                 otherwise
                     learningGain = obj.KLearningGradient;
             end
-                    val = sprintf('%s_%s_ke%0.2f_%s.mat',obj.ic,obj.windVariantName,learningGain,datestr(now,'ddmm_hhMMss')); 
+            val = sprintf('%s_%s_ke%0.2f_%s.mat',obj.ic,obj.windVariantName,learningGain,datestr(now,'ddmm_hhMMss'));
         end
         function val = get.refAreaWing(obj)
             val = obj.refLengthWing*obj.wingSpan; % Reference area of wing
@@ -261,10 +272,6 @@ classdef simulationParametersClass < handle
             val = (obj.mass*obj.wingSpan^2)/12; % Rotational inertia about body fixed z axis (approx with (ml^2)/12))
         end
         
-        function val = get.waypointZenithTol(obj)
-            val = obj.waypointAzimuthTol;
-        end
-
         function val = get.azimuthInitializationDirections(obj)
             if obj. numInitializationLaps == 5 % 5 point initialization
                 val = [0 1 -1 0  0];
@@ -280,7 +287,7 @@ classdef simulationParametersClass < handle
             end
         end
         function val = get.initTwist(obj)
-           val = atan2(-obj.height,obj.width/2);
+            val = atan2(-obj.height,obj.width/2);
         end
         function val = get.initPositionGFS(obj)
             val = [100 0  (obj.elev*pi/180)]; % Initial position in spherical coordinates
@@ -310,11 +317,5 @@ classdef simulationParametersClass < handle
             % https://en.wikipedia.org/wiki/Crosswind_kite_power
             val = (2/27)*obj.rho*obj.refAreaWing*obj.wingTable.kl1*(max(obj.wingTable.cl./obj.wingTable.cd))^2*obj.vWind^3;
         end
-%         function val = get.azimuthDistanceLim(obj)
-%             val = 3*obj.azimuthOffset;
-%         end
-%         function val = get.zenithDistanceLim(obj)
-%             val = obj.zenithOffset;
-%         end
     end
 end
