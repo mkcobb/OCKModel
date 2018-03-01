@@ -1,32 +1,30 @@
-close all
-clearvars -except tscc p
-modelName = 'CDCJournalModel';
-workingDir = which([modelName,'.slx']);
-cd(fileparts(workingDir))
+function h = plotPerformanceIndex()
+iter = evalin('base','iter');
 
-% load(fullfile(pwd,'data','data.mat'))
-% clc
+h.figure = createFigure();
 
-plot(1:length(p.performanceIndexOpt),p.performanceIndexOpt,...
-    'Marker','o','MarkerSize',10,'MarkerFaceColor','k',...
-    'MarkerEdgeColor','k','Color','k')
+h.axSpatialError = subplot(3,1,1);
+plot(iter.spatialError);
+grid on
 xlabel('Iteration Number')
-ylabel('Performance Index')
-set(gca,'FontSize',36)
+ylabel('Spatial Error')
+set(gca,'FontSize',24)
 
-
-saveas(gcf,fullfile(pwd,'figures','Opt_performanceIndex.png'));
-saveas(gcf,fullfile(pwd,'figures','Opt_performanceIndex.fig'));
-
-
-figure
-plot(1:length(p.meanPAROpt),p.meanPAROpt,...
-    'Marker','o','MarkerSize',10,'MarkerFaceColor','k',...
-    'MarkerEdgeColor','k','Color','k')
+h.axMeanPAR = subplot(3,1,2);
+plot(iter.meanPAR);
+grid on
 xlabel('Iteration Number')
 ylabel('Mean PAR')
-set(gca,'FontSize',36)
+set(gca,'FontSize',24)
+
+h.axPerformanceIndex = subplot(3,1,3);
+plot(iter.performanceIndex);
+grid on
+xlabel('Iteration Number')
+ylabel('Performance Index')
+set(gca,'FontSize',24)
 
 
-saveas(gcf,fullfile(pwd,'figures','Opt_PAR.png'));
-saveas(gcf,fullfile(pwd,'figures','Opt_PAR.fig'));
+linkaxes([h.axSpatialError h.axMeanPAR h.axPerformanceIndex],'x')
+
+end

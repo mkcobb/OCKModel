@@ -1,7 +1,7 @@
 classdef simulationParametersClass < handle
     properties
         % Simulation Time
-        T  = 1*60*60; % Total Simulation Time
+        T  = 2*60*60; % Total Simulation Time
         Ts = 0.002;  % Sample time
         
         % Output Settings (0 to turn off , 1 to turn on)
@@ -10,10 +10,10 @@ classdef simulationParametersClass < handle
         animationOnOff  = 0; % Generate animations
         saveOnOff       = 1; % Save data to the hard drive
         soundOnOff      = 0; % Turn on/off gong noise at end of simulation
+        decimation      = 10; % Log data every N points
         
         % Simulation Switches
         runMode     = 'baseline'; % 'optimization','baseline' or 'grid'
-        decimation  = 10; % Log data every N points
         modelName   = 'CDCJournalModel'; % Name of the model to run
         
         % Environmental Conditions Switches
@@ -40,7 +40,7 @@ classdef simulationParametersClass < handle
         % Performance Index Weights
         weightME   = 1;     % Weight on Mean Energy in performance index
         weightPAR  = 1;     % Weight on Power Augmentation Ratio in performance index
-        weightSE   = 40;    % Weight on Spatial Error in performance index
+        weightSE   = 3;    % Weight on Spatial Error in performance index
         weightCCE  = 1;     % Weight on Command-Based Control Energy
         weightMCE  = 1;     % Weight on Moment-Based Control Energy
         weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
