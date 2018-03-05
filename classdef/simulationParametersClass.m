@@ -15,7 +15,8 @@ classdef simulationParametersClass < handle
         % Simulation Switches
         runMode     = 'baseline'; % 'optimization','baseline' or 'grid'
         modelName   = 'CDCJournalModel'; % Name of the model to run
-        
+        windVariant =3;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+                
         % Environmental Conditions Switches
         gravityOnOff    = 1; % 0 turns gravity off
         
@@ -40,7 +41,7 @@ classdef simulationParametersClass < handle
         % Performance Index Weights
         weightME   = 1;     % Weight on Mean Energy in performance index
         weightPAR  = 1;     % Weight on Power Augmentation Ratio in performance index
-        weightSE   = 3;    % Weight on Spatial Error in performance index
+        weightSE   = 6.5;    % Weight on Spatial Error in performance index
         weightCCE  = 1;     % Weight on Command-Based Control Energy
         weightMCE  = 1;     % Weight on Moment-Based Control Energy
         weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
@@ -51,28 +52,28 @@ classdef simulationParametersClass < handle
         persistentExcitationSwitch  = 2;    % 1 for sin and cos, 2 for white noise
         
         KLearningNewton             = .1;   % ILC learning gain for Newton-based update
-        KLearningGradient           = 2;   % ILC learning gain for gradient-based update
+        KLearningGradient           = 3;   % ILC learning gain for gradient-based update
         azimuthDistanceLim          = 4;    % Size of trust region
         zenithDistanceLim           = 0.5; % Size of trust region
         
         % RLS Settings
         numInitializationLaps   = 5;    % 5 or 9 point initialization
-        forgettingFactor        = 0.97;    % Forgetting factor used in RLS response surface update
+        forgettingFactor        = 0.99;    % Forgetting factor used in RLS response surface update
         azimuthOffset           = 1;    % degrees, initialization grid step size
         zenithOffset            = 0.5;  % degrees, initialization grid step size
         
         % Persistent Excitation Settings
         azimuthPerturbationPeriod  = 4;     % azimuth basis parameter perturbation amplitude
         zenithPerturbationPeriod   = 4;     % zenith basis parameter perturbation amplitude
-        azimuthPerturbationGain    = 5;     % azimuth basis parameter period (not used in white noise implementation,cannot be zero)
-        zenithPerturbationGain     = 0.5;   % zenith basis parameter period (not used in white noise implementation,cannot be zero)
+        azimuthPerturbationGain    = 2.5;     % azimuth basis parameter period (not used in white noise implementation,cannot be zero)
+        zenithPerturbationGain     = 0.25;   % zenith basis parameter period (not used in white noise implementation,cannot be zero)
         
         % Waypoints Settings
         ic                  = 'wide';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
         num                 = 10^3;         % number of angles used to parameterize the path
         elev                = 45;           % mean course elevation
-        lookAheadPercent    = 0.025;          % percentage of total path length that the carrot is ahead
-        localSearchPercent  = 0.05;          % percentage of the course to search for the closest point on the path, centered on previous closest point.
+        lookAheadPercent    = 0.025;         % percentage of total path length that the carrot is ahead
+        localSearchPercent  = 0.025         % percentage of the course to search for the closest point on the path, centered on previous closest point.
         
         % Rudder Controller
         kr1  = 100; % Controller gain
@@ -120,7 +121,7 @@ classdef simulationParametersClass < handle
         numOptimizationLaps              % Number of optimization iterations
         height                           % Initial course width
         width                            % Initial course height
-        windVariant                      % 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+
         refAreaWing                      % Wing reference area
         refAreaRudder                    % Rudder reference area
         J                                % Moment inertia about body fixe z axis
@@ -195,18 +196,18 @@ classdef simulationParametersClass < handle
             val = 5;
         end
         
-        function val = get.windVariant(obj)
-            switch lower(obj.runMode)
-                case 'baseline'
-                    val = 3;
-                case 'optimization'
-                    val = 3;
-                case 'grid'
-                    val = 1;
-                otherwise
-                    val = 1;
-            end
-        end
+%         function val = get.windVariant(obj)
+%             switch lower(obj.runMode)
+%                 case 'baseline'
+%                     val = 3;
+%                 case 'optimization'
+%                     val = 3;
+%                 case 'grid'
+%                     val = 1;
+%                 otherwise
+%                     val = 1;
+%             end
+%         end
         
         % Functions to initialize the waypoints
         function val = get.height(obj)

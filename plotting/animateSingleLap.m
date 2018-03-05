@@ -73,14 +73,14 @@ h.ax.Position = h.ax.Position + [0.125 0 -0.05 0];
 h.ax.FontSize = 24;
 
 % Set the limits to give "global" view
-% xlim([0 p.initPositionGFS(1)])
-% ylim( p.initPositionGFS(1)*[-1 1])
-% zlim([0 p.initPositionGFS(1)])
+xlim([0 p.initPositionGFS(1)])
+ylim( p.initPositionGFS(1)*[-1 1])
+zlim([0 p.initPositionGFS(1)])
 
 % Set the limits to give a "zoomed in" view
-xlim([min([pathX positionsGFC(:,1)']) max([pathX positionsGFC(:,1)'])])
-ylim([min([pathY positionsGFC(:,2)']) max([pathY positionsGFC(:,2)'])])
-zlim([min([pathZ positionsGFC(:,3)']) max([pathZ positionsGFC(:,3)'])])
+% xlim([min([pathX positionsGFC(:,1)']) max([pathX positionsGFC(:,1)'])])
+% ylim([min([pathY positionsGFC(:,2)']) max([pathY positionsGFC(:,2)'])])
+% zlim([min([pathZ positionsGFC(:,3)']) max([pathZ positionsGFC(:,3)'])])
 view(90,30)
 
 pathColors = tsc.vAppWindGFC.data;

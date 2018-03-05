@@ -21,7 +21,7 @@ h.axPerformanceIndex = subplot(3,1,3);
 plot(iter.performanceIndex);
 grid on
 xlabel('Iteration Number')
-ylabel('Performance Index')
+ylabel({'Performance','Index'})
 set(gca,'FontSize',24)
 
 
