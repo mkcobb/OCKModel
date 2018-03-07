@@ -1,5 +1,6 @@
-function h = comparePerformanceIndices()
-load(fullfile(pwd,'paperData','wide_baseline.mat'),'iter');
+function h = comparePerformanceIndices(initialCondition)
+initialCondition = lower(initialCondition);
+load(fullfile(pwd,'paperData',sprintf('%s_baseline.mat',initialCondition)),'iter');
 
 h.figure = createFigure();
 
@@ -10,6 +11,7 @@ hold on
 legend
 xlabel('Time, t [min]')
 ylabel('Spatial Error')
+title(['Initial Condition: ' upper(initialCondition(1)) initialCondition(2:end)])
 set(gca,'FontSize',24)
 
 h.axMeanPAR = subplot(3,1,2);
@@ -32,9 +34,10 @@ set(gca,'FontSize',24)
 
 linkaxes([h.axSpatialError h.axMeanPAR h.axPerformanceIndex],'x')
 
-load(fullfile(pwd,'paperData','wide_optimization.mat'),'iter');
+load(fullfile(pwd,'paperData',sprintf('%s_optimization.mat',initialCondition)),'iter');
 plot(iter.startTimes/60,iter.spatialError,'DisplayName','Optimization','Parent',h.axSpatialError);
 plot(iter.startTimes/60,iter.meanPAR,'DisplayName','Optimization','Parent',h.axMeanPAR);
 plot(iter.startTimes/60,iter.performanceIndex,'DisplayName','Optimization','Parent',h.axPerformanceIndex);
 
+savePlot(h.figure,sprintf('%s_performanceIndexComparison',initialCondition))
 end
