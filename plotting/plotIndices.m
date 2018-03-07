@@ -1,7 +1,8 @@
 function h = plotIndices()
 tsc = evalin('base','tsc');
 
-h.figure = figure('units','normalized','Position',[0 0 0.9 0.9]);
+h.figure = createFigure();
+
 h.axStartIndex = subplot(3,1,1);
 h.startIndex = plot(tsc.startIndex);
 grid on

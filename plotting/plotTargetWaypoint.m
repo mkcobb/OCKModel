@@ -8,11 +8,8 @@ if numel(varargin)
 end
 
 
-if size(get(groot,'MonitorPositions'),1)>1
-    h.fig = figure('units','normalized','position',[-1 0 1 0.9]);
-else
-    h.fig = figure('units','normalized','position',[0 0 1 0.9]);
-end
+h.fig = createFigure();
+
 
 ax1=subplot(3,1,1);
 h.heading  = plot(tsc.time,tsc.targetWaypointIndex.data(:,1),'DisplayName','Index');

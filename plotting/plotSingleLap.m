@@ -10,11 +10,7 @@ sphereX = p.initPositionGFS(1)*sphereX;
 sphereY = p.initPositionGFS(1)*sphereY;
 sphereZ = p.initPositionGFS(1)*sphereZ;
 
-if size(get(groot,'MonitorPositions'),1)>1
-    h.fig = figure('units','normalized','position',[-1 0 1 0.95]);
-else
-    h.fig = figure('units','normalized','position',[0 0 1 0.95]);
-end
+h.fig = createFigure();
 
 h.sphere = surf(sphereX,sphereY,sphereZ,...
     'EdgeColor','none','FaceAlpha',0.25);

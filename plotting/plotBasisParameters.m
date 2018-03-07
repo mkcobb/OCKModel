@@ -1,19 +1,13 @@
 function h = plotBasisParameters(varargin)
-tsc = evalin('base','tsc');
+tsc  = evalin('base','tsc');
 iter = evalin('base','iter');
 if numel(varargin)
     lapNumber = varargin{1};
-
     times = tsc.time(tsc.currentIterationNumber.data==lapNumber);
     tsc = getsampleusingtime(tsc,times(1),times(end));
 end
 
-
-if size(get(groot,'MonitorPositions'),1)>1
-    h.fig = figure('units','normalized','position',[-1 0 1 0.9]);
-else
-    h.fig = figure('units','normalized','position',[0 0 1 0.9]);
-end
+h.figure = createFigure();
 
 h.ax1Bottom = subplot(2,1,1);
 h.azimuthVsTime  = plot(tsc.time,tsc.basisParams.data(:,1),...
