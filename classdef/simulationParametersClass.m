@@ -15,7 +15,7 @@ classdef simulationParametersClass < handle
         % Simulation Switches
         runMode     = 'optimization'; % 'optimization','baseline' or 'grid'
         modelName   = 'CDCJournalModel'; % Name of the model to run
-        windVariant =3;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+        windVariant = 1;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
                 
         % Environmental Conditions Switches
         gravityOnOff    = 1; % 0 turns gravity off
@@ -69,7 +69,7 @@ classdef simulationParametersClass < handle
         zenithPerturbationGain     = 0.25;   % zenith basis parameter period (not used in white noise implementation,cannot be zero)
         
         % Waypoints Settings
-        ic                  = 'both';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
+        ic                  = 'wide';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
         num                 = 10^3;         % number of angles used to parameterize the path
         elev                = 45;           % mean course elevation
         lookAheadPercent    = 0.025;         % percentage of total path length that the carrot is ahead
