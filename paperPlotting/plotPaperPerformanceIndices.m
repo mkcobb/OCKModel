@@ -60,8 +60,11 @@ switch lower(windType)
                 %% Load the correct file
                 load(fullfile(pwd,'paperData','constantWind',sprintf('%s.mat',files{kk})),'iter')
                 %% Actually do the plotting
-                h{end}.top.plot{end+1}       = plot(iter.(thingsToPlot{jj}),'Parent',h{end}.axTop,'DisplayName',files{kk});
-                h{end}.bottom.plot{end+1}    = plot(iter.startTimes/60,iter.(thingsToPlot{jj}),'Parent',h{end}.axBottom,'DisplayName',files{kk});
+                displayName = strsplit(files{kk},'_');
+                displayName = displayName{1};
+                
+                h{end}.top.plot{end+1}       = plot(iter.(thingsToPlot{jj}),'Parent',h{end}.axTop,'DisplayName',displayName);
+                h{end}.bottom.plot{end+1}    = plot(iter.startTimes/60,iter.(thingsToPlot{jj}),'Parent',h{end}.axBottom,'DisplayName',displayName);
                 
                 %% Format all the plots
                 h{end}.top.plot{end}.Color = colors{kk};
@@ -87,9 +90,8 @@ switch lower(windType)
         initConditions = {};
         for ii = 1:length(files)
             % Get the name of the initial condition
-            ic = regexp(files(ii).name,'\_\D*\_','Match');
-            ic = ic{1};
-            initConditions{end+1} = ic(2:end-1);
+            ic = strsplit(files(ii).name,'_');
+            initConditions{end+1} = ic{1};
         end
         initConditions = unique(initConditions);
         
@@ -136,21 +138,21 @@ switch lower(windType)
                 end
                 
                 %% Rename the figure so that we can keep them all straight
-                h{end}.figure.Name = sprintf('NREL_%s',initConditions{ii});
+                h{end}.figure.Name = sprintf('nrel_%s',initConditions{ii});
                 
                 %% Load the correct file
-                load(fullfile(pwd,'paperData','variableWind',sprintf('NREL_%s_optimization.mat',initConditions{ii})),'iter')
+                load(fullfile(pwd,'paperData','variableWind',sprintf('%s_nrel_optimization.mat',initConditions{ii})),'iter')
                 
                 %% Actually do the plotting
-                h{end}.top.plotOptimization       = plot(iter.performanceIndex,'Parent',h{end}.axTop,'DisplayName','Optimization');
-                h{end}.bottom.plotOptimization    = plot(iter.startTimes/60,iter.performanceIndex,'Parent',h{end}.axBottom,'DisplayName','Baseline');
+                h{end}.top.plotOptimization       = plot(iter.(thingsToPlot{jj}),'Parent',h{end}.axTop,'DisplayName','Optimization');
+                h{end}.bottom.plotOptimization    = plot(iter.startTimes/60,iter.(thingsToPlot{jj}),'Parent',h{end}.axBottom,'DisplayName','Baseline');
                 
                 %% Load the correct file
-                load(fullfile(pwd,'paperData','variableWind',sprintf('NREL_%s_baseline.mat',initConditions{ii})),'iter')
+                load(fullfile(pwd,'paperData','variableWind',sprintf('%s_nrel_baseline.mat',initConditions{ii})),'iter')
                 
                 %% Actually do the plotting
-                h{end}.top.plotBaseline       = plot(iter.performanceIndex,'Parent',h{end}.axTop,'DisplayName','Baseline');
-                h{end}.bottom.plotBaseline    = plot(iter.startTimes/60,iter.performanceIndex,'Parent',h{end}.axBottom,'DisplayName','Baseline');
+                h{end}.top.plotBaseline       = plot(iter.(thingsToPlot{jj}),'Parent',h{end}.axTop,'DisplayName','Baseline');
+                h{end}.bottom.plotBaseline    = plot(iter.startTimes/60,iter.(thingsToPlot{jj}),'Parent',h{end}.axBottom,'DisplayName','Baseline');
                 axis tight
                 
                 %% Format all the plots

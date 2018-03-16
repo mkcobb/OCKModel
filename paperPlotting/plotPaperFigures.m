@@ -1,5 +1,11 @@
 function plotPaperFigures()
+
 close all
+%% Plot the basis parameters
+h = plotPaperBasisParameters();
+savePlot(h.figure,'basisParameters');
+clear h
+
 %% Plot the constant wind performance index
 h = plotPaperPerformanceIndices('constant');
 for ii = 1:length(h)
@@ -17,5 +23,7 @@ h = plotPaperPerformanceIndices('variable');
 for ii = 1:length(h)
     savePlot(h{ii}.figure,h{ii}.fileName);
 end
+
+findfigs 
 
 end

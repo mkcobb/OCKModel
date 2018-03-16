@@ -9,42 +9,15 @@ end
 
 h.figure = createFigure();
 
-h.ax1Bottom = subplot(2,1,1);
-h.azimuthVsTime  = plot(tsc.time,tsc.basisParams.data(:,1),...
-    'DisplayName','Azimuth');
+h.axTop = subplot(2,1,1);
 hold on
 grid on
-ylabel('Azimuth, [rad]')
-% xlabel('Time. [s]')
-set(gca,'FontSize',24)
-h.ax1Top = axes('Position',h.ax1Bottom.Position,...
-    'XAxisLocation','top',...
-    'YAxisLocation','right',...
-    'Color','none','FontSize',24);
-grid on
-hold on
-% xlabel('Iteration')
-h.azimuthVsIteration = plot(iter.basisParams(:,1));
+h.azimuthTop = stairs(iter.basisParams(:,1));
+h.zenithTop  = stairs(iter.basisParams(:,2));
 
-h.ax2Bottom = subplot(2,1,2);
-h.zenithVsTime  = plot(tsc.time,tsc.basisParams.data(:,2),...
-    'DisplayName','Zenith');
+h.axBottom = subplot(2,1,2);
 hold on
 grid on
-ylabel('Zenith, [rad]')
-% xlabel('Time. [s]')
-set(gca,'FontSize',24)
-h.ax2Top = axes('Position',h.ax2Bottom.Position,...
-    'XAxisLocation','top',...
-    'YAxisLocation','right',...
-    'Color','none','FontSize',24);
-grid on
-hold on
-% xlabel('Iteration')
-h.zenithVsIteration = plot(iter.basisParams(:,2));
+h.azimuthBottom = stairs(iter.startTimes,iter.basisParams(:,1));
+h.zenithBottom  = stairs(iter.startTimes,iter.basisParams(:,2));
 
-linkaxes([h.ax1Bottom h.ax2Bottom],'x')
-linkaxes([h.ax1Top h.ax2Top],'x')
-
-linkaxes([h.ax1Bottom h.ax1Top],'y')
-linkaxes([h.ax2Bottom h.ax2Top],'y')

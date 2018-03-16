@@ -4,6 +4,9 @@ tsc = evalin('base','tsc');
 
 % Clean up lap number to be sure that it fits the necessary structure
 lapNumber = round(sort(lapNumber));
+if length(lapNumber)==1
+    lapNumber(2) = lapNumber;
+end
 lapNumber = lapNumber(1):min([tsc.currentIterationNumber.data(end) lapNumber(2)]);
 
 
@@ -96,7 +99,7 @@ for ii = 1:length(tsc.time)
 %             'Marker','none','LineWidth',1,'DisplayName','Flight Path');
         h.position          = scatter3(positionsGFC(1,1),positionsGFC(1,2),positionsGFC(1,3),...
             'Marker','.','LineWidth',1,'DisplayName','Flight Path','CData',pathColors(ii,:));
-        h.targetWaypoint    = scatter3(targetWaypointsX(1),targetWaypointsY(2),targetWaypointsZ(3),...
+        h.targetWaypoint    = scatter3(targetWaypointsX(1),targetWaypointsY(1),targetWaypointsZ(1),...
             'MarkerFaceColor','flat','SizeData',75,'DisplayName','Carrot','CData',[1 0 0]);
         h.closestPoint      = scatter3(closestPointsX(1),closestPointsY(1),closestPointsZ(1),...
             'CData',[0 1 0],'MarkerFaceColor','flat','SizeData',75,'DisplayName','Projection');

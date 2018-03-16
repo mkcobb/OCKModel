@@ -9,7 +9,7 @@ classdef simulationParametersClass < handle
         plotsOnOff      = 1; % Generate plots
         animationOnOff  = 0; % Generate animations
         saveOnOff       = 1; % Save data to the hard drive
-        soundOnOff      = 0; % Turn on/off gong noise at end of simulation
+        soundOnOff      = 1; % Turn on/off gong noise at end of simulation
         decimation      = 10; % Log data every N points
         
         % Simulation Switches
@@ -41,7 +41,7 @@ classdef simulationParametersClass < handle
         % Performance Index Weights
         weightME   = 1;     % Weight on Mean Energy in performance index
         weightPAR  = 1;     % Weight on Power Augmentation Ratio in performance index
-        weightSE   = 6.5;    % Weight on Spatial Error in performance index
+        weightSE   = 10;    % Weight on Spatial Error in performance index
         weightCCE  = 1;     % Weight on Command-Based Control Energy
         weightMCE  = 1;     % Weight on Moment-Based Control Energy
         weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
@@ -52,13 +52,13 @@ classdef simulationParametersClass < handle
         persistentExcitationSwitch  = 2;    % 1 for sin and cos, 2 for white noise
         
         KLearningNewton             = .1;   % ILC learning gain for Newton-based update
-        KLearningGradient           = 3;   % ILC learning gain for gradient-based update
-        azimuthDistanceLim          = 4;    % Size of trust region
-        zenithDistanceLim           = 0.5; % Size of trust region
+        KLearningGradient           = 0.0125;   % ILC learning gain for gradient-based update
+        azimuthDistanceLim          = 6;    % Size of trust region
+        zenithDistanceLim           = 0.75; % Size of trust region
         
         % RLS Settings
         numInitializationLaps   = 5;    % 5 or 9 point initialization
-        forgettingFactor        = 0.99;    % Forgetting factor used in RLS response surface update
+        forgettingFactor        = 0.999;    % Forgetting factor used in RLS response surface update
         azimuthOffset           = 1;    % degrees, initialization grid step size
         zenithOffset            = 0.5;  % degrees, initialization grid step size
         
@@ -196,28 +196,16 @@ classdef simulationParametersClass < handle
             val = 5;
         end
         
-%         function val = get.windVariant(obj)
-%             switch lower(obj.runMode)
-%                 case 'baseline'
-%                     val = 3;
-%                 case 'optimization'
-%                     val = 3;
-%                 case 'grid'
-%                     val = 1;
-%                 otherwise
-%                     val = 1;
-%             end
-%         end
         
         % Functions to initialize the waypoints
         function val = get.height(obj)
             switch lower(obj.ic)
                 case 'both'
-                    val = 7.5;
+                    val = 25;
                 case 'wide'
-                    val = 12;
+                    val = 5;
                 case 'short'
-                    val = 6.5;
+                    val = 20;
                 otherwise
                     val = obj.height;
             end
@@ -225,11 +213,11 @@ classdef simulationParametersClass < handle
         function val = get.width(obj)
             switch lower(obj.ic)
                 case 'both'
-                    val = 90;
-                case 'wide'
                     val = 100;
+                case 'wide'
+                    val = 120;
                 case 'short'
-                    val = 60;
+                    val = 30;
                 otherwise
                     val = obj.width;
             end
@@ -255,13 +243,7 @@ classdef simulationParametersClass < handle
             end
         end
         function val = get.saveFile(obj)
-            switch obj.updateTypeSwitch
-                case 1
-                    learningGain = obj.KLearningNewton;
-                otherwise
-                    learningGain = obj.KLearningGradient;
-            end
-            val = sprintf('%s_%s_ke%0.2f_%s.mat',obj.ic,obj.windVariantName,learningGain,datestr(now,'ddmm_hhMMss'));
+            val = sprintf('%s_%s_%s_%s.mat',obj.ic,lower(obj.windVariantName),obj.runMode,datestr(now,'ddmm_hhMMss'));
         end
         function val = get.refAreaWing(obj)
             val = obj.refLengthWing*obj.wingSpan; % Reference area of wing
