@@ -5,7 +5,10 @@ warnings = signals(contains(signals,'warning','IgnoreCase',true));
 
 fprintf('\nFAULT READOUT\nValue | Description\n')
 for ii = 1:length(faults)
+    try
    fprintf('  %d   | %s\n',tsc.(faults{ii}).data(end),faults{ii}) 
+    catch
+    end
 end
 
 fprintf('\nWARNING READOUT\nValue | Description\n')

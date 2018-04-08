@@ -9,7 +9,7 @@ classdef simulationParametersClass < handle
         plotsOnOff      = 1; % Generate plots
         animationOnOff  = 0; % Generate animations
         saveOnOff       = 1; % Save data to the hard drive
-        soundOnOff      = 1; % Turn on/off gong noise at end of simulation
+        soundOnOff      = 0; % Turn on/off gong noise at end of simulation
         decimation      = 10; % Log data every N points
         
         % Simulation Switches
@@ -47,9 +47,14 @@ classdef simulationParametersClass < handle
         weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
         weightMDCE = 1;     % Weight on Moment Derivative-BAsed Control Energy
         
-        % Optimization Settings
+        % ILC Settings
         updateTypeSwitch            = 2;    % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
         persistentExcitationSwitch  = 2;    % 1 for sin and cos, 2 for white noise
+        
+        switchUpperLevelILC         = 0;    % >0 to turn on the basis parameter adaptaion
+        switchLowerLevelILC         = 1;    % >0 to turn on the lower level (path following ILC)
+        
+        lowerLevelILCGain           = 0.0001 % lower level ILC gain [rad/m]
         
         KLearningNewton             = .1;   % ILC learning gain for Newton-based update
         KLearningGradient           = 0.0125;   % ILC learning gain for gradient-based update
@@ -70,7 +75,7 @@ classdef simulationParametersClass < handle
         
         % Waypoints Settings
         ic                  = 'wide';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
-        num                 = 10^3;         % number of angles used to parameterize the path
+        num                 = 10^3;         % number of angles/path variables used to parameterize the path
         elev                = 45;           % mean course elevation
         lookAheadPercent    = 0.025;         % percentage of total path length that the carrot is ahead
         localSearchPercent  = 0.025         % percentage of the course to search for the closest point on the path, centered on previous closest point.
