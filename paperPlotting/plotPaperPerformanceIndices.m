@@ -1,9 +1,9 @@
-function h = plotPaperPerformanceIndices(windType)
+function h = plotPaperPerformanceIndices(windType,version)
 lines = {'-','--',':'};
 switch lower(windType)
     case 'constant'
-        %% Create plots of the performance index under variable wind
-        files = dir(fullfile(pwd,'paperData','constantWind'));
+        %% Create plots of the performance index under co wind
+        files = dir(fullfile(pwd,'paperData',version,'constantWind'));
         files = files(3:end);
         files = {files.name};
         files = split(files,'.');
@@ -59,7 +59,7 @@ switch lower(windType)
             
             for kk = 1:length(files)
                 %% Load the correct file
-                load(fullfile(pwd,'paperData','constantWind',sprintf('%s.mat',files{kk})),'iter')
+                load(fullfile(pwd,'paperData',version,'constantWind',sprintf('%s.mat',files{kk})),'iter')
                 %% Actually do the plotting
                 displayName = strsplit(files{kk},'_');
                 displayName = displayName{1};
@@ -100,7 +100,7 @@ switch lower(windType)
         
     case 'variable'
         %% Create plots of the performance index under variable wind
-        files = dir(fullfile(pwd,'paperData','variableWind'));
+        files = dir(fullfile(pwd,'paperData',version,'variableWind'));
         files = files(3:end);
         
         initConditions = {};
@@ -157,14 +157,14 @@ switch lower(windType)
                 h{end}.figure.Name = sprintf('nrel_%s',initConditions{ii});
                 
                 %% Load the correct file
-                load(fullfile(pwd,'paperData','variableWind',sprintf('%s_nrel_optimization.mat',initConditions{ii})),'iter')
+                load(fullfile(pwd,'paperData',version,'variableWind',sprintf('%s_nrel_optimization.mat',initConditions{ii})),'iter')
                 
                 %% Actually do the plotting
                 h{end}.top.plotOptimization       = plot(iter.(thingsToPlot{jj}),'Parent',h{end}.axTop,'DisplayName','Optimization');
                 h{end}.bottom.plotOptimization    = plot(iter.startTimes/60,iter.(thingsToPlot{jj}),'Parent',h{end}.axBottom,'DisplayName','Fixed Path');
                 
                 %% Load the correct file
-                load(fullfile(pwd,'paperData','variableWind',sprintf('%s_nrel_baseline.mat',initConditions{ii})),'iter')
+                load(fullfile(pwd,'paperData',version,'variableWind',sprintf('%s_nrel_baseline.mat',initConditions{ii})),'iter')
                 
                 %% Actually do the plotting
                 h{end}.top.plotBaseline       = plot(iter.(thingsToPlot{jj}),'Parent',h{end}.axTop,'DisplayName','Fixed Path');

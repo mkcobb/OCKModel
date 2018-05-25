@@ -13,9 +13,9 @@ classdef simulationParametersClass < handle
         decimation      = 10; % Log data every N points
         
         % Simulation Switches
-        runMode     = 'optimization'; % 'optimization','baseline' or 'grid'
+        runMode     = 'baseline'; % 'optimization','baseline' or 'grid'
         modelName   = 'CDCJournalModel'; % Name of the model to run
-        windVariant = 1;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+        windVariant = 3;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
                 
         % Environmental Conditions Switches
         gravityOnOff    = 1; % 0 turns gravity off
@@ -47,35 +47,30 @@ classdef simulationParametersClass < handle
         weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
         weightMDCE = 1;     % Weight on Moment Derivative-BAsed Control Energy
         
-        % ILC Settings
+        % Optimization Settings
         updateTypeSwitch            = 2;    % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
         persistentExcitationSwitch  = 2;    % 1 for sin and cos, 2 for white noise
         
-        switchUpperLevelILC         = 0;    % >0 to turn on the basis parameter adaptaion
-        switchLowerLevelILC         = 1;    % >0 to turn on the lower level (path following ILC)
-        
-        lowerLevelILCGain           = 0.0001 % lower level ILC gain [rad/m]
-        
         KLearningNewton             = .1;   % ILC learning gain for Newton-based update
-        KLearningGradient           = 0.0125;   % ILC learning gain for gradient-based update
+        KLearningGradient           = 0.01; % ILC learning gain for gradient-based update
         azimuthDistanceLim          = 6;    % Size of trust region
-        zenithDistanceLim           = 0.75; % Size of trust region
+        zenithDistanceLim           = 1.5;  % Size of trust region
         
         % RLS Settings
         numInitializationLaps   = 5;    % 5 or 9 point initialization
-        forgettingFactor        = 0.999;    % Forgetting factor used in RLS response surface update
+        forgettingFactor        = 0.99;    % Forgetting factor used in RLS response surface update
         azimuthOffset           = 1;    % degrees, initialization grid step size
         zenithOffset            = 0.5;  % degrees, initialization grid step size
         
         % Persistent Excitation Settings
-        azimuthPerturbationPeriod  = 4;     % azimuth basis parameter perturbation amplitude
-        zenithPerturbationPeriod   = 4;     % zenith basis parameter perturbation amplitude
-        azimuthPerturbationGain    = 2.5;     % azimuth basis parameter period (not used in white noise implementation,cannot be zero)
-        zenithPerturbationGain     = 0.25;   % zenith basis parameter period (not used in white noise implementation,cannot be zero)
+        azimuthPerturbationPeriod    = 4;     % azimuth basis parameter excitation period (when using sin/cos)
+        zenithPerturbationPeriod     = 4;     % zenith basis parameter excitation period (when using sin/cos)
+        azimuthPerturbationAmplitude = 2.5;   % azimuth basis parameter excitation amplitude 
+        zenithPerturbationAmplitude  = 1;     % zenith basis parameter excitation amplitude 
         
         % Waypoints Settings
-        ic                  = 'wide';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
-        num                 = 10^3;         % number of angles/path variables used to parameterize the path
+        ic                  = 'both';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
+        num                 = 10^3;         % number of angles used to parameterize the path
         elev                = 45;           % mean course elevation
         lookAheadPercent    = 0.025;         % percentage of total path length that the carrot is ahead
         localSearchPercent  = 0.025         % percentage of the course to search for the closest point on the path, centered on previous closest point.
@@ -83,7 +78,7 @@ classdef simulationParametersClass < handle
         % Rudder Controller
         kr1  = 100; % Controller gain
         kr2  = 100; % Controller gain
-        tauR = 0.1;  % Ref model time const: 1/(tauR*s+1)^2
+        tauR = 0.100;  % Ref model time const: 1/(tauR*s+1)^2
         
         % Lifting Body Physical Parameters
         mass      = 50; % Mass
@@ -206,7 +201,7 @@ classdef simulationParametersClass < handle
         function val = get.height(obj)
             switch lower(obj.ic)
                 case 'both'
-                    val = 25;
+                    val = 15;
                 case 'wide'
                     val = 5;
                 case 'short'
@@ -218,7 +213,7 @@ classdef simulationParametersClass < handle
         function val = get.width(obj)
             switch lower(obj.ic)
                 case 'both'
-                    val = 100;
+                    val = 90;
                 case 'wide'
                     val = 120;
                 case 'short'

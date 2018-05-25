@@ -1,6 +1,6 @@
-function h = plotPaperBasisParameters()
+function h = plotPaperBasisParameters(version)
 %% Create plots of the basis parameters under constant wind
-files = dir(fullfile(pwd,'paperData','constantWind'));
+files = dir(fullfile(pwd,'paperData',version,'constantWind'));
 files = files(3:end);
 files = {files.name};
 files = split(files,'.');
@@ -30,7 +30,7 @@ h.axTop.FontSize = 32;
 h.axBottom.FontSize = 32;
 
 for jj = 1:length(files)
-    load(fullfile(pwd,'paperData','constantWind',files{jj}))
+    load(fullfile(pwd,'paperData',version,'constantWind',files{jj}),'iter')
     name = strsplit(files{jj},'_');
     name = name{1};
     switch name
@@ -41,8 +41,10 @@ for jj = 1:length(files)
         case 'wide'
             displayName = 'IC 3';
     end
+
     plot(iter.basisParams(:,1)*180/pi,'Parent',h.axTop,'LineWidth',1.5,'Color',colors{jj},'DisplayName',displayName,'LineStyle',lines{jj})
     plot(iter.startTimes/60,iter.basisParams(:,2)*180/pi,'Parent',h.axBottom,'LineWidth',1.5,'Color',colors{jj},'LineStyle',lines{jj},'DisplayName',displayName)
+
 end
 legend(h.axBottom,'Location','northeast','Orientation','Horizontal')
 axis(h.axTop,'tight')

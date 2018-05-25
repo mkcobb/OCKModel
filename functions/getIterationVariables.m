@@ -14,8 +14,10 @@ signalNames{end+1} = get(portHandles.Outport(:),'PropagatedSignals');
 
 % Iteration-varying terms: all outputs of the block:
 % CDCJournalModel/Controller/Update Waypoints
-handle   = getSimulinkBlockHandle('CDCJournalModel/Controller/ILC Basis Parameter Update/');
+handle   = getSimulinkBlockHandle('CDCJournalModel/Controller/Update Waypoints/');
+
 portHandles = get(handle,'PortHandle');
+
 signalNames = vertcat(signalNames,get(portHandles.Outport(:),'PropagatedSignals'));
 % Clean things up by dropping anyt empty cells
 signalNames = signalNames(~[cellfun(@isempty,signalNames)]);
