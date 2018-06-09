@@ -2,22 +2,21 @@ function signalNames = getIterationVariables()
 
 % Performance index terms: all inputs and outputs of this block:
 % 'CDCJournalModel/Controller/Performance Calculation/Term Selection Switches'
-handle   = getSimulinkBlockHandle('CDCJournalModel/Controller/Performance Calculation/Term Selection Switches');
-inports  = find_system(handle,'FindAll','On','SearchDepth',1,'BlockType','Inport');
-portHandles = get(handle,'PortHandle');
- % Get the names of the signals attached to those inports
-signalNames = get(inports,'OutputSignalNames');
-signalNames = vertcat(signalNames{:,1});
-% Add the signal attached to the outputs
-signalNames{end+1} = get(portHandles.Outport(:),'PropagatedSignals');
-% Add them all to the structure called 'iter'
+% handle   = getSimulinkBlockHandle('CDCJournalModel/Controller/Performance Calculation');
+% inports  = find_system(handle,'FindAll','On','SearchDepth','0','BlockType','Variant Subsystem');
+
+% Get the signals attached to variant subsystems in
+% CDCJournalModel/Controller/Performance Calculation
+blocks = find_system('CDCJournalModel/Controller/Performance Calculation','SearchDepth',1);
+outportBlock = get(getSimulinkBlockHandle(blocks(strcmpi(get_param(blocks,'BlockType'),'Outport'))));
+addBlock = get(outportBlock.PortConnectivity.SrcBlock);
+variantSubsystemBlocks = get([addBlock.PortConnectivity.SrcBlock]);
+signalNames = [variantSubsystemBlocks.OutputSignalNames]';
 
 % Iteration-varying terms: all outputs of the block:
 % CDCJournalModel/Controller/Update Waypoints
 handle   = getSimulinkBlockHandle('CDCJournalModel/Controller/Update Waypoints/');
-
 portHandles = get(handle,'PortHandle');
-
 signalNames = vertcat(signalNames,get(portHandles.Outport(:),'PropagatedSignals'));
 % Clean things up by dropping anyt empty cells
 signalNames = signalNames(~[cellfun(@isempty,signalNames)]);

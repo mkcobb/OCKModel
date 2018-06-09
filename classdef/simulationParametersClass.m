@@ -30,13 +30,13 @@ classdef simulationParametersClass < handle
         g               = 9.80665;   % Acceleration due to gravity
         
         % Performance Index Switches
-        switchME   = 0; % Switch that turns on/off the Mean Energy term in the performance index
-        switchPAR  = 1; % Switch that turns on/off the Power Augmentation Ratio term in the performance index
-        switchSE   = 1; % Switch that turns on/off the Spatial Error term in the performance index
-        switchCCE  = 0; % Switch that turns on/off the Command-Based Control Energy term in the performance index
-        switchMCE  = 0; % Switch that turns on/off the Moment-BasedControl Energy term in the performance index
-        switchCDCE = 0; % Switch that turns on/off the Command Derivative-Based Control Energy term in the performance index
-        switchMDCE = 0; % Switch that turns on/off the Moment Derivative-Based Control Energy term in the performance index
+%         switchME   = 0; % Switch that turns on/off the Mean Energy term in the performance index
+%         switchPAR  = 1; % Switch that turns on/off the Power Augmentation Ratio term in the performance index
+%         switchSE   = 1; % Switch that turns on/off the Spatial Error term in the performance index
+%         switchCCE  = 0; % Switch that turns on/off the Command-Based Control Energy term in the performance index
+%         switchMCE  = 0; % Switch that turns on/off the Moment-BasedControl Energy term in the performance index
+%         switchCDCE = 0; % Switch that turns on/off the Command Derivative-Based Control Energy term in the performance index
+%         switchMDCE = 0; % Switch that turns on/off the Moment Derivative-Based Control Energy term in the performance index
         
         % Performance Index Weights
         weightME   = 1;     % Weight on Mean Energy in performance index
