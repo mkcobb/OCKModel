@@ -13,7 +13,7 @@ classdef simulationParametersClass < handle
         decimation      = 10; % Log data every N points
         
         % Simulation Switches
-        runMode     = 'baseline'; % 'optimization','baseline' or 'grid'
+        runMode     = 'spatialILC'; % 'optimization','baseline', 'grid', or 'spatialILC'
         modelName   = 'CDCJournalModel'; % Name of the model to run
         windVariant = 3;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
                 
@@ -28,25 +28,12 @@ classdef simulationParametersClass < handle
         rho             = 1.225;     % density of air kg/m^3
         viscosity       = 1.4207E-5; % Kinematic viscosity of air (I think this is only used in Reynolds number calculation)
         g               = 9.80665;   % Acceleration due to gravity
-        
-        % Performance Index Switches
-%         switchME   = 0; % Switch that turns on/off the Mean Energy term in the performance index
-%         switchPAR  = 1; % Switch that turns on/off the Power Augmentation Ratio term in the performance index
-%         switchSE   = 1; % Switch that turns on/off the Spatial Error term in the performance index
-%         switchCCE  = 0; % Switch that turns on/off the Command-Based Control Energy term in the performance index
-%         switchMCE  = 0; % Switch that turns on/off the Moment-BasedControl Energy term in the performance index
-%         switchCDCE = 0; % Switch that turns on/off the Command Derivative-Based Control Energy term in the performance index
-%         switchMDCE = 0; % Switch that turns on/off the Moment Derivative-Based Control Energy term in the performance index
-        
+
         % Performance Index Weights
         weightME   = 1;     % Weight on Mean Energy in performance index
         weightPAR  = 1;     % Weight on Power Augmentation Ratio in performance index
         weightSE   = 10;    % Weight on Spatial Error in performance index
-        weightCCE  = 1;     % Weight on Command-Based Control Energy
-        weightMCE  = 1;     % Weight on Moment-Based Control Energy
-        weightCDCE = 1;     % Weight on Command Derivative-Based Control Energy
-        weightMDCE = 1;     % Weight on Moment Derivative-BAsed Control Energy
-        
+
         % Optimization Settings
         updateTypeSwitch            = 2;    % 1 for Newton-based ILC update law, 2 for gradient-based ILC update law
         persistentExcitationSwitch  = 2;    % 1 for sin and cos, 2 for white noise

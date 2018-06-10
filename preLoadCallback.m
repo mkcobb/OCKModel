@@ -17,3 +17,5 @@ p = simulationParametersClass;
 loadWindData;
 % Initialize Variants
 initializeVariants;
+% Initialize Busses
+initializeBusses;
