@@ -8,7 +8,7 @@ function signalNames = getIterationVariables()
 % Get the signals attached to variant subsystems in
 % CDCJournalModel/Controller/Performance Calculation
 blocks = find_system('CDCJournalModel/Controller/Performance Calculation','SearchDepth',1);
-outportBlock = get(getSimulinkBlockHandle(blocks(strcmpi(get_param(blocks,'BlockType'),'Outport'))));
+outportBlock = get(getSimulinkBlockHandle(blocks(strcmpi(get_param(blocks,'Name'),'performanceIndex'))));
 addBlock = get(outportBlock.PortConnectivity.SrcBlock);
 variantSubsystemBlocks = get([addBlock.PortConnectivity.SrcBlock]);
 signalNames = [variantSubsystemBlocks.OutputSignalNames]';
