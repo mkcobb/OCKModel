@@ -1,18 +1,18 @@
 function initializeVariants
 % This function creates model variant objects in the base workspace for the
 % variant subsystems of the CDCJournalModel
-p = evalin('base','p');
+sim = evalin('base','sim');
 
-switch p.runMode
+switch sim.runMode
     case {'optimization','baseline'}
         defaultController = 1;
     case 'spatialILC'
-        defaultController = 2;
+        defaultController = 1;
 end
 
 
 %% Set up controller variants
-variants = {'ControllerOptimization','ControllerSpatialILC'};
+variants = {'OCK'};
 % Create variant control variable in the workspace
 evalin('base',sprintf('VCController=%d;',defaultController))
 for ii = 1:length(variants)
@@ -39,5 +39,13 @@ if defaultController == 1
     for ii = 1:length(variants)
         evalin('base',sprintf('variant%s=Simulink.Variant(''VCSpatialErrorTerm==%d'');',variants{ii},ii))
     end
+end
+
+%% Set up environmental (flow speed) variants
+variants = {'constant'};
+% Create variant control variable in the workspace
+evalin('base',sprintf('VCEnvironment=%d;',defaultController))
+for ii = 1:length(variants)
+    evalin('base',sprintf('variant%s=Simulink.Variant(''VCController==%d'');',variants{ii},ii))
 end
 end

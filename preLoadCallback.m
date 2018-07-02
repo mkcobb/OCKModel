@@ -1,6 +1,6 @@
 clear;clear mex;
 % Change to the directory containing the model
-cd(fileparts(which('CDCJournalModel.slx')))
+cd(fileparts(which('OCKModel.slx')))
 % Add all subdirectories to the path
 addpath(genpath(pwd));
 
@@ -8,11 +8,11 @@ if exist('out.mat','file')==2
     delete out.mat
 end
 
-if exist('CDCJournalModel.slxc','file')==2
-    delete CDCJournalModel.slxc
+if exist('OCKModel.slxc','file')==2
+    delete OCKModel.slxc
 end
 % Load simulation parameters.
-p = simulationParametersClass;
+initializeClasses
 % Load up wind data
 loadWindData;
 % Initialize Variants

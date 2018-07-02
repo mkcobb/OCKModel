@@ -1,7 +1,7 @@
 classdef simulationParametersClass < handle
     properties
         % Simulation Time
-        T  = 60*60; % Total Simulation Time
+        T  = 20*60; % Total Simulation Time
         Ts = 0.002;  % Sample time
         
         % Output Settings (0 to turn off , 1 to turn on)
@@ -10,21 +10,21 @@ classdef simulationParametersClass < handle
         animationOnOff  = 0; % Generate animations
         saveOnOff       = 1; % Save data to the hard drive
         soundOnOff      = 0; % Turn on/off gong noise at end of simulation
-        decimation      = 10; % Log data every N points
+%         decimation      = 10; % Log data every N points
         
         % Simulation Switches
         runMode     = 'spatialILC'; % 'optimization','baseline', 'grid', or 'spatialILC'
-        modelName   = 'CDCJournalModel'; % Name of the model to run
-        windVariant = 3;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
+        modelName   = 'OCKModel'; % Name of the model to run
+        windVariant = 1;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
                 
         % Environmental Conditions Switches
         gravityOnOff    = 1; % 0 turns gravity off
         
-        vWind           = 7; % Mean wind speed (used when windVariant = 1)
+        vFlow           = 7; % Mean wind speed (used when windVariant = 1)
         windDirection   = 0; % Wind heading in degrees
-        turbulenceOnOff = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
-        windAltitude    = 146; % Must be one of the available altitudes from Dr. Archer's data
-        noiseSeeds      = [23341 23342 23343 23344];  % Noise seeds used in white noise generators for von Karman turbulence
+%         turbulenceOnOff = 0; % 0 for off, 1 for on (0 sets wind speed to Dr. Archers data, linearly interpolated)
+%         windAltitude    = 146; % Must be one of the available altitudes from Dr. Archer's data
+%         noiseSeeds      = [23341 23342 23343 23344];  % Noise seeds used in white noise generators for von Karman turbulence
         rho             = 1.225;     % density of air kg/m^3
         viscosity       = 1.4207E-5; % Kinematic viscosity of air (I think this is only used in Reynolds number calculation)
         g               = 9.80665;   % Acceleration due to gravity
@@ -59,7 +59,7 @@ classdef simulationParametersClass < handle
         ic                  = 'both';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
         num                 = 10^3;         % number of angles used to parameterize the path
         elev                = 45;           % mean course elevation
-        lookAheadPercent    = 0.025;         % percentage of total path length that the carrot is ahead
+        lookAheadPercent    = 0.025;        % percentage of total path length that the carrot is ahead
         localSearchPercent  = 0.025         % percentage of the course to search for the closest point on the path, centered on previous closest point.
         
         % Rudder Controller
@@ -80,7 +80,7 @@ classdef simulationParametersClass < handle
         
         % Initial Conditions
         initVelocity      = 28; % Initial straight line speed (BFX direction)
-        initOmega         = 0;  % Initial twist rate
+        initTwistRate     = 0;  % Initial twist rate
         
         % Actuator Rate Limiters
         wingAngleRateLimit      = inf;      % degrees/sec
