@@ -1,7 +1,7 @@
 classdef simulationParametersClass < handle
     properties
         % Simulation Time
-        T  = 2*60*60; % Total Simulation Time
+        T  = 60*60; % Total Simulation Time
         Ts = 0.002;  % Sample time
         
         % Output Settings (0 to turn off , 1 to turn on)
@@ -97,7 +97,10 @@ classdef simulationParametersClass < handle
         rudderCdStartAlpha  = -0.1;
         rudderCdEndAlpha    = 0.1;
         
-        iterationChangeDeadband 
+        % Spatial ILC 
+        waypointPathIndices = [0.25 0.75];
+        exponentialGainAmplitude = 0.25*pi/180;
+        exponentialWidth = 60;
     end
     properties (Dependent = false) % Property value is not stored in object
         
@@ -129,9 +132,19 @@ classdef simulationParametersClass < handle
         localSearchIndexOffsetVector     % Angular distance to look ahead for the path following.
         lookAheadIndexOffset             % Number of indices ahead that the carrot is
         firstOptimizationIterationNum    % Have to calculate this because the if block doesn't accept "+" operator
+        spatialILCWeightingMatrix
     end
     
     methods
+        
+        function val = get.spatialILCWeightingMatrix(obj)
+            val = zeros(obj.num);
+            weightVector = obj.exponentialGainAmplitude*exp(-(1:obj.num)/obj.exponentialWidth)';
+            waypointPathIndicesClean = round(obj.waypointPathIndices*obj.num);
+            for ii = 1:length(waypointPathIndicesClean)
+                val(1:waypointPathIndicesClean(ii),waypointPathIndicesClean(ii)) = flip(weightVector(1:waypointPathIndicesClean(ii)));
+            end
+        end
         function val = get.firstOptimizationIterationNum(obj)
             val = obj.numInitializationLaps+obj.numSettlingLaps+1;
         end
@@ -183,30 +196,39 @@ classdef simulationParametersClass < handle
             val = 5;
         end
         
-        
         % Functions to initialize the waypoints
         function val = get.height(obj)
-            switch lower(obj.ic)
-                case 'both'
-                    val = 15;
-                case 'wide'
-                    val = 5;
-                case 'short'
-                    val = 20;
-                otherwise
-                    val = obj.height;
+            switch obj.runMode
+                case {'optimization','baseline'}
+                    switch lower(obj.ic)
+                        case 'both'
+                            val = 15;
+                        case 'wide'
+                            val = 5;
+                        case 'short'
+                            val = 20;
+                        otherwise
+                            val = obj.height;
+                    end
+                case 'spatialILC'
+                    val = 10;
             end
         end
         function val = get.width(obj)
-            switch lower(obj.ic)
-                case 'both'
+            switch obj.runMode
+                case {'optimization','baseline'}
+                    switch lower(obj.ic)
+                        case 'both'
+                            val = 90;
+                        case 'wide'
+                            val = 120;
+                        case 'short'
+                            val = 30;
+                        otherwise
+                            val = obj.width;
+                    end
+                case 'spatialILC'
                     val = 90;
-                case 'wide'
-                    val = 120;
-                case 'short'
-                    val = 30;
-                otherwise
-                    val = obj.width;
             end
         end
         function val = get.waypointAngles(obj)

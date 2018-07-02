@@ -32,7 +32,7 @@ if ~isempty(logsout)
         % object
         if any(strcmp(iterSignals,signalNames{ii}))
             if length(ts.time) == 1 % Constant quantites have a different length data vector
-                set(ts,'Time',tsc.time,'Data',repmat(ts.data(1),[length(tsc.time),1]));
+                set(ts,'Time',tsc.time,'Data',repmat(ts.data(1,:),[length(tsc.time),1]));
             end
             try
                 tsc = addts(tsc,ts);

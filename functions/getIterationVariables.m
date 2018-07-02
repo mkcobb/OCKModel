@@ -7,7 +7,7 @@ function signalNames = getIterationVariables()
 
 % Get the signals attached to variant subsystems in
 % CDCJournalModel/Controller/Performance Calculation
-blocks = find_system('CDCJournalModel/Controller/Performance Calculation','SearchDepth',1);
+blocks = find_system('CDCJournalModel/Controller/Optimization Controller/Performance Calculation','SearchDepth',1);
 outportBlock = get(getSimulinkBlockHandle(blocks(strcmpi(get_param(blocks,'Name'),'performanceIndex'))));
 addBlock = get(outportBlock.PortConnectivity.SrcBlock);
 variantSubsystemBlocks = get([addBlock.PortConnectivity.SrcBlock]);
@@ -15,7 +15,7 @@ signalNames = [variantSubsystemBlocks.OutputSignalNames]';
 
 % Iteration-varying terms: all outputs of the block:
 % CDCJournalModel/Controller/Update Waypoints
-handle   = getSimulinkBlockHandle('CDCJournalModel/Controller/Update Waypoints/');
+handle   = getSimulinkBlockHandle('CDCJournalModel/Controller/Optimization Controller/Update Waypoints/');
 portHandles = get(handle,'PortHandle');
 signalNames = vertcat(signalNames,get(portHandles.Outport(:),'PropagatedSignals'));
 % Clean things up by dropping anyt empty cells
