@@ -17,8 +17,12 @@ classdef simulationClass < handle
         soundOnOff      = 0; % Turn on/off gong noise at end of simulation
         %         decimation      = 10; % Log data every N points
         
+        
+%         numInitializationLaps   = 5;    % 5 or 9 point initialization
+        
+        
         % Simulation Switches
-        runMode     = 'spatialILC'; % 'optimization','baseline', 'grid', or 'spatialILC'
+ 
         modelName   = 'OCKModel'; % Name of the model to run
         windVariant = 1;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
         
@@ -32,6 +36,7 @@ classdef simulationClass < handle
         modelPath                        % Path to the model
         saveFile                         % File name of the resulting data file
         savePath                         % Path to the resulting data file
+
         
     end
     
@@ -58,6 +63,7 @@ classdef simulationClass < handle
         function val = get.modelPath(obj)
             val = which([obj.modelName '.slx']);
         end
+               
         
     end
 end

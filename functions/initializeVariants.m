@@ -42,7 +42,7 @@ if defaultController == 1
 end
 
 %% Set up environmental (flow speed) variants
-variants = {'constant'};
+variants = {'Constant'};
 % Create variant control variable in the workspace
 evalin('base',sprintf('VCEnvironment=%d;',defaultController))
 for ii = 1:length(variants)

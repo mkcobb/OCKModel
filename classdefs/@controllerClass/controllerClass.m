@@ -4,7 +4,7 @@ classdef controllerClass < handle
         defaultInstanceName = 'ctrl';
     end
     properties
-        
+               runMode     = 'baseline'; % 'optimization','baseline', 'grid', or 'spatialILC'
         % Performance Index Weights
         weightME   = 1;     % Weight on Mean Energy in performance index
         weightPAR  = 1;     % Weight on Power Augmentation Ratio in performance index
@@ -21,6 +21,7 @@ classdef controllerClass < handle
         
         % RLS Settings
         numInitializationLaps   = 5;    % 5 or 9 point initialization
+        
         forgettingFactor        = 0.99;    % Forgetting factor used in RLS response surface update
         azimuthOffset           = 1;    % degrees, initialization grid step size
         zenithOffset            = 0.5;  % degrees, initialization grid step size
@@ -34,7 +35,7 @@ classdef controllerClass < handle
         % Waypoints Settings
         ic                  = 'both';       % which set of initial conditions to use, if 'userspecified' then must set width and height manually in calling script
         num                 = 10^3;         % number of angles used to parameterize the path
-        elev                = 45;           % mean course elevation
+        meanElevation       = 45;           % mean course elevation
         lookAheadPercent    = 0.025;        % percentage of total path length that the carrot is ahead
         localSearchPercent  = 0.025         % percentage of the course to search for the closest point on the path, centered on previous closest point.
         
@@ -65,6 +66,7 @@ classdef controllerClass < handle
         lookAheadIndexOffset             % Number of indices ahead that the carrot is
         firstOptimizationIterationNum    % Have to calculate this because the if block doesn't accept "+" operator
         spatialILCWeightingMatrix
+
     end
     
     methods

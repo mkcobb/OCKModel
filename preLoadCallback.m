@@ -14,7 +14,7 @@ end
 % Load simulation parameters.
 initializeClasses
 % Load up wind data
-loadWindData;
+loadFlowProfiles;
 % Initialize Variants
 initializeVariants;
 % Initialize Busses

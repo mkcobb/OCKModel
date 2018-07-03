@@ -23,8 +23,8 @@ busElementData = {'wingAngleCommand',1,'double';...
 createBusInBaseWorkspace(busElementData,'busControllerOutput')
 
 %% If we're running the optimization controller, then create the controller feedback bus
-p = evalin('base','p');
-if ~strcmpi(p.runMode,'SpatialILC')
+sim = evalin('base','sim');
+if ~strcmpi(sim.runMode,'SpatialILC')
     % Create the controller feedback bus automatically
     clear busElementData
     busElementData = {...
