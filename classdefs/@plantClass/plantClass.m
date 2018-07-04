@@ -17,13 +17,13 @@ classdef plantClass < handle
         rudderSpan        = 4; % Rudder span
         
         % Initial Conditions
-        initialVelocity      = 28; % Initial straight line speed (BFX direction)
+%         initialVelocity      = 28; % Initial straight line speed (BFX direction)
         initialTwistRate     = 0;  % Initial twist rate
         initialRadius        = 100;
         initialAzimuth       = 0;
         initialZenith       = 45; % deg
-        initialRadiusRate        = 100;
-        initialSpeed = 7; % Initial speed m/s in the BFX direction
+        initialRadiusRate        = 0;
+        initialSpeed = 20; % Initial speed m/s in the BFX direction
         
         
         % Actuator Rate Limiters
@@ -46,9 +46,13 @@ classdef plantClass < handle
         wingTable                        % Aerodynamic table for the main wing
         rudderTable                      % Aerodynamic table for the rudder
         initPositionGFS                  % Initial position in ground fixed spherical coordinates
+        J                                % Moment inertia about body fixe z axis
     end
     
     methods
+        function val = get.J(obj)
+            val = (obj.mass*obj.wingSpan^2)/12; % Rotational inertia about body fixed z axis (approx with (ml^2)/12))
+        end
         function val = get.refAreaWing(obj)
             val = obj.refLengthWing*obj.wingSpan; % Reference area of wing
         end

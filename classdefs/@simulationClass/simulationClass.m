@@ -53,11 +53,11 @@ classdef simulationClass < handle
         
         
         function val = get.savePath(obj)
-            val = fullfile(fileparts(obj.modelPath),'data',filesep);
+            val = fullfile(fileparts(obj.modelPath),'output','data',filesep);
         end
         
         function val = get.saveFile(obj)
-            val = sprintf('%s_%s_%s_%s.mat',obj.ic,lower(obj.windVariantName),obj.runMode,datestr(now,'ddmm_hhMMss'));
+            val = sprintf('%s.mat',datestr(now,'ddmm_hhMMss'));
         end
         
         function val = get.modelPath(obj)

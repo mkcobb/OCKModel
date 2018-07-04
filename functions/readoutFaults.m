@@ -1,4 +1,4 @@
-function readoutFaults(p,tsc,iter)
+function readoutFaults(tsc)
 signals = gettimeseriesnames(tsc);
 faults = signals(contains(signals,'fault','IgnoreCase',true));
 warnings = signals(contains(signals,'warning','IgnoreCase',true));
