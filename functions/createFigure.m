@@ -5,4 +5,5 @@ if size(get(groot,'MonitorPositions'),1)>1
 else
     fig = figure('units','normalized','position',[0 0 1 0.9]);
 end
+fig.Color = 'w';
 end

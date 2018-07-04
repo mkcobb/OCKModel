@@ -6,7 +6,7 @@ classdef simulationClass < handle
     properties
         
         % Simulation Time
-        T  = 20*60; % Total Simulation Time
+        T  = 5*60; % Total Simulation Time
         Ts = 0.002;  % Sample time
         
         % Output Settings (0 to turn off , 1 to turn on)
