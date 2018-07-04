@@ -33,7 +33,7 @@ classdef faultsClass < handle
         forceZLow       = 0;
         forceZHigh      = inf;
         
-        stabilizerSaturationEnable    = 0;
+        stabilizerSaturationEnable    = 1;
 
     end
     

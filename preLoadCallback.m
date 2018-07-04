@@ -13,8 +13,6 @@ if exist('OCKModel.slxc','file')==2
 end
 % Load simulation parameters.
 initializeClasses
-% Load up wind data
-loadFlowProfiles;
 % Initialize Variants
 initializeVariants;
 % Initialize Busses

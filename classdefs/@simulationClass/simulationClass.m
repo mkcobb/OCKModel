@@ -6,7 +6,7 @@ classdef simulationClass < handle
     properties
         
         % Simulation Time
-        T  = 5*60; % Total Simulation Time
+        T  = inf; % Total Simulation Time
         Ts = 0.002;  % Sample time
         
         % Output Settings (0 to turn off , 1 to turn on)
@@ -17,15 +17,7 @@ classdef simulationClass < handle
         soundOnOff      = 0; % Turn on/off gong noise at end of simulation
         %         decimation      = 10; % Log data every N points
         
-        
-%         numInitializationLaps   = 5;    % 5 or 9 point initialization
-        
-        
-        % Simulation Switches
- 
         modelName   = 'OCKModel'; % Name of the model to run
-        windVariant = 1;% 1 for constant wind, 2 for Dr. Archers Data, 3 for NREL data
-        
         
     end
     properties (Dependent = false) % Property value is not stored in object
@@ -36,12 +28,9 @@ classdef simulationClass < handle
         modelPath                        % Path to the model
         saveFile                         % File name of the resulting data file
         savePath                         % Path to the resulting data file
-
-        
     end
     
     methods
-        
         function val = get.runModeSwitch(obj)
             switch lower(obj.runMode)
                 case 'grid'
@@ -50,20 +39,14 @@ classdef simulationClass < handle
                     val = 1;
             end
         end
-        
-        
         function val = get.savePath(obj)
             val = fullfile(fileparts(obj.modelPath),'output','data',filesep);
         end
-        
         function val = get.saveFile(obj)
             val = sprintf('%s.mat',datestr(now,'ddmm_hhMMss'));
         end
-        
         function val = get.modelPath(obj)
             val = which([obj.modelName '.slx']);
         end
-               
-        
     end
 end
