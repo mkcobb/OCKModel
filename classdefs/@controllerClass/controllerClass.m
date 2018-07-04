@@ -44,7 +44,7 @@ classdef controllerClass < handle
         % Rudder Controller
         kr1  = 100; % Controller gain
         kr2  = 100; % Controller gain
-        tauR = 0.100;  % Ref model time const: 1/(tauR*s+1)^2
+        tauR = 0.0500;  % Ref model time const: 1/(tauR*s+1)^2
         
         numSettlingLaps = 5;
         numSimulationLaps = 100;
