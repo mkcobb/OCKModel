@@ -12,7 +12,7 @@ classdef plantClass < handle
         momentArm           = 8;    % Length of moment arm for rudder
         
         % Wing parameters
-        wingOswaldEfficiency    = 0.8; 
+        wingOswaldEfficiency    = 0.8;
         refLengthWing           = 2;    % Chord length of airfoil
         wingSpan                = 10;   % Wing span
         
@@ -28,18 +28,29 @@ classdef plantClass < handle
         
         % Initial Conditions
         initialTwistRate     = 0;  % Initial twist rate [deg/s]
-        initialRadius        = 100;
+        initialRadius        = 50;
         initialAzimuth       = 0;  % [deg]
-        initialZenith        = 45; % [deg]
+        initialZenith        = 60; % [deg]
         initialRadiusRate    = 0;  % Initial rate of tether payout
         initialSpeed         = 9;  % Initial speed m/s in the BFX direction
         
         % Actuator Rate Limiters
         wingAngleRateLimit      = inf;      % degrees/sec
         rudderAngleRateLimit    = inf;      % degrees/sec
-
+        
+        % Wing table file name
+        wingFileName = 'NACA 2415_T1_Re5.085_M0.00_N9.0.txt';
+        wingShapeFileName = 'naca2415.dat';
+        wingClFitLimits = [-0.05 0.2];
+        wingCdFitLimits = [-0.05 0.2];
+        
+        % Wing table file name
+        rudderFileName = 'NACA-0009 9.0% smoothed_T1_Re1.000_M0.00_N9.0.txt';
+        rudderShapeFileName = 'n0009sm.dat';
+        rudderClFitLimits = 0.15*[-1 1];
+        rudderCdFitLimits = 0.15*[-1 1];
+        
     end
-    
     properties (Dependent = false) % Property value is stored in object
         refAreaWing                      % Wing reference area
         refAreaRudder                    % Rudder reference area
@@ -47,9 +58,9 @@ classdef plantClass < handle
         wingThickness                    % Thickness of wing (used in added mass estimation)
         rudderThickness                  % Thickness of rudder (user in added mass estimation)
         stabilizerThickness              % Thickness of stabilizer (user in added mass estimation)
-%         rotationalInertia                % Moment inertia about body fixe z axis
-%         azimuthInitializationDirections  % Defines the grid of initialization points
-%         zenithInitializationDirections   % Defines the grid of initialization points
+        %         rotationalInertia                % Moment inertia about body fixe z axis
+        %         azimuthInitializationDirections  % Defines the grid of initialization points
+        %         zenithInitializationDirections   % Defines the grid of initialization points
         initialVelocityGFS               % Initla velocity in ground fixe spherical coords
         wingAspectRatio                  % Aspect ratio of the main wing
         rudderAspectRatio                % Aspect ratio of the rudder
@@ -65,13 +76,13 @@ classdef plantClass < handle
         wingCrossSectionArea             % Cross sectional area of the wing
         rudderCrossSectionArea
         stabilizerCrossSectionArea
-        wingVolume 
+        wingVolume
         rudderVolume
         stabilizerVolume
         totalVolume                      % Total volume of the whole system
         aeroSurfacesVolume               % Volume of all aerodynamic surfaces
         mass                             % Total mass of system (calculated to give neutral buoyancy)
-
+        
     end
     
     methods
@@ -79,10 +90,10 @@ classdef plantClass < handle
             val = environmentClass.rho*obj.totalVolume;
         end
         function val = get.stabilizerCrossSectionArea(obj)
-           val = obj.rudderCrossSectionArea; 
+            val = obj.rudderCrossSectionArea;
         end
         function val = get.fuselageLength(obj)
-           val = obj.momentArm+obj.forwardLength; 
+            val = obj.momentArm+obj.forwardLength;
         end
         function val = get.wingVolume(obj)
             val = obj.wingCrossSectionArea*obj.wingSpan;
@@ -98,7 +109,7 @@ classdef plantClass < handle
             val = obj.wingVolume+obj.rudderVolume+obj.stabilizerVolume;
         end
         function val = get.totalVolume(obj)
-           val = obj.aeroSurfacesVolume+pi*obj.fuselageRadius^2*obj.fuselageLength; 
+            val = obj.aeroSurfacesVolume+pi*obj.fuselageRadius^2*obj.fuselageLength;
         end
         function val = get.J(obj)
             massMomentArm = 0.75*obj.mass*(obj.momentArm/obj.fuselageLength);
@@ -147,200 +158,52 @@ classdef plantClass < handle
         function val = get.stabilizerAspectRatio(obj)
             val = obj.stabilizerSpan/obj.refLengthStabilizer;
         end
-        function val = get.wingTable(obj)
-            wingRudder = 'wing';
-            files = dir(fullfile(fileparts(which('OCKModel.slx')),'hydrofoilLibrary',wingRudder));
-            [~,~,data] = xlsread(fullfile(files(end).folder,files(end).name));
-            aeroTable.fileName = files(3).name;
-            aeroTable.Re = data{4,2};
-            jj = 1;
-            while ~strcmpi(data{jj,1},'alpha')
-                jj=jj+1;
-            end
-            data = cell2mat(data(jj+1:end,1:3));
-            
-            aeroTable.alpha = data(:,1)*(pi/180);
-            aeroTable.cl    = data(:,2);
-            aeroTable.cl0   = aeroTable.cl(data(:,3)==min(data(:,3)));
-            aeroTable.cd    = min(data(:,3))+((aeroTable.cl-aeroTable.cl0).^2)./(pi*obj.wingOswaldEfficiency*obj.wingAspectRatio);
-            
-            wingClStartAlpha    = -0.1;
-            wingClEndAlpha      = 0.1;
-            wingCdStartAlpha    = -0.1;
-            wingCdEndAlpha      = 0.1;
-            
-            idx = 1:length(aeroTable.alpha);
-            
-            alphaClCrop = aeroTable.alpha(idx(abs(wingClStartAlpha-aeroTable.alpha)==min(abs(wingClStartAlpha-aeroTable.alpha))):...
-                idx(abs(wingClEndAlpha-aeroTable.alpha)==min(abs(wingClEndAlpha-aeroTable.alpha))));
-            clCrop    = aeroTable.cl(idx(abs(wingClStartAlpha-aeroTable.alpha)==min(abs(wingClStartAlpha-aeroTable.alpha))):...
-                idx(abs(wingClEndAlpha-aeroTable.alpha)==min(abs(wingClEndAlpha-aeroTable.alpha))));
-            alphaCdCrop = aeroTable.alpha(idx(abs(wingCdStartAlpha-aeroTable.alpha)==min(abs(wingCdStartAlpha-aeroTable.alpha))):...
-                idx(abs(wingCdEndAlpha-aeroTable.alpha)==min(abs(wingCdEndAlpha-aeroTable.alpha))));
-            cdCrop    = aeroTable.cd(idx(abs(wingCdStartAlpha-aeroTable.alpha)==min(abs(wingCdStartAlpha-aeroTable.alpha))):...
-                idx(abs(wingCdEndAlpha-aeroTable.alpha)==min(abs(wingCdEndAlpha-aeroTable.alpha))));
-            
-            
-            pl=polyfit(alphaClCrop,clCrop,1);
-            aeroTable.kl1=pl(1);
-            aeroTable.kl0=pl(2);
-            
-            pd = polyfit(alphaCdCrop,cdCrop,2);
-            aeroTable.kd2=pd(1);
-            aeroTable.kd1=pd(2);
-            aeroTable.kd0=pd(3);
-            
-            aeroTable.clStartAlpha  = wingClStartAlpha;
-            aeroTable.clEndAlpha    = wingClEndAlpha;
-            aeroTable.cdStartAlpha  = wingCdStartAlpha;
-            aeroTable.cdEndAlpha    = wingCdEndAlpha;
-            
-            val = aeroTable;
-        end
+       
         
         function val = get.rudderTable(obj)
-            wingRudder = 'rudder';
-            files = dir(fullfile(fileparts(which('OCKModel.slx')),'hydrofoilLibrary',wingRudder));
-            
-            [~,~,data]=xlsread(fullfile(files(end).folder,files(end).name));
-            aeroTable.fileName = files(3).name;
-            aeroTable.Re = data{4,2};
-            jj=1;
-            while ~strcmpi(data{jj,1},'alpha')
-                jj=jj+1;
-            end
-            data = cell2mat(data(jj+1:end,1:3));
-            
-            
-            aeroTable.alpha = data(:,1)*(pi/180);
-            aeroTable.cl    = data(:,2);
-            aeroTable.cl0   = aeroTable.cl(data(:,3) == min(data(:,3)));
-            aeroTable.cd    = min(data(:,3))+((aeroTable.cl-aeroTable.cl0).^2)./(pi*obj.rudderOswaldEfficiency*obj.rudderAspectRatio);
-            
-            wingClStartAlpha    = -0.1;
-            wingClEndAlpha      = 0.1;
-            wingCdStartAlpha    = -0.15;
-            wingCdEndAlpha      = 0.15;
-            
-            idx = 1:length(aeroTable.alpha);
-            
-            alphaClCrop = aeroTable.alpha(idx(abs(wingClStartAlpha-aeroTable.alpha)==min(abs(wingClStartAlpha-aeroTable.alpha))):...
-                idx(abs(wingClEndAlpha-aeroTable.alpha)==min(abs(wingClEndAlpha-aeroTable.alpha))));
-            clCrop    = aeroTable.cl(idx(abs(wingClStartAlpha-aeroTable.alpha)==min(abs(wingClStartAlpha-aeroTable.alpha))):...
-                idx(abs(wingClEndAlpha-aeroTable.alpha)==min(abs(wingClEndAlpha-aeroTable.alpha))));
-            alphaCdCrop = aeroTable.alpha(idx(abs(wingCdStartAlpha-aeroTable.alpha)==min(abs(wingCdStartAlpha-aeroTable.alpha))):...
-                idx(abs(wingCdEndAlpha-aeroTable.alpha)==min(abs(wingCdEndAlpha-aeroTable.alpha))));
-            cdCrop    = aeroTable.cd(idx(abs(wingCdStartAlpha-aeroTable.alpha)==min(abs(wingCdStartAlpha-aeroTable.alpha))):...
-                idx(abs(wingCdEndAlpha-aeroTable.alpha)==min(abs(wingCdEndAlpha-aeroTable.alpha))));
-            
-            
-            pl=polyfit(alphaClCrop,clCrop,1);
-            aeroTable.kl1=pl(1);
-            aeroTable.kl0=pl(2);
-            
-            pd = polyfit(alphaCdCrop,cdCrop,2);
-            aeroTable.kd2=pd(1);
-            aeroTable.kd1=pd(2);
-            aeroTable.kd0=pd(3);
-            
-            aeroTable.clStartAlpha  = wingClStartAlpha;
-            aeroTable.clEndAlpha    = wingClEndAlpha;
-            aeroTable.cdStartAlpha  = wingCdStartAlpha;
-            aeroTable.cdEndAlpha    = wingCdEndAlpha;
-            
-            
-            val = aeroTable;
+            val = loadAeroTable(obj.rudderFileName,obj.rudderClFitLimits,...
+                obj.rudderCdFitLimits,obj.rudderOswaldEfficiency,obj.rudderAspectRatio);
         end
         
         function val = get.stabilizerTable(obj)
-            wingRudder = 'rudder';
-            files = dir(fullfile(fileparts(which('OCKModel.slx')),'hydrofoilLibrary',wingRudder));
-            [~,~,data]=xlsread(fullfile(files(end).folder,files(end).name));
-            aeroTable.fileName = files(3).name;
-            aeroTable.Re = data{4,2};
-            jj=1;
-            while ~strcmpi(data{jj,1},'alpha')
-                jj=jj+1;
-            end
-            data = cell2mat(data(jj+1:end,1:3));
-            
-            aeroTable.alpha = data(:,1)*(pi/180);
-            aeroTable.cl    = data(:,2);
-            aeroTable.cl0   = aeroTable.cl(data(:,3)==min(data(:,3)));
-            aeroTable.cd    = min(data(:,3))+((aeroTable.cl-aeroTable.cl0).^2)./(pi*obj.stabilizerOswaldEfficiency*obj.rudderAspectRatio);
-            
-            % Extend the table using a flat plate approximation
-%             aeroTable.
-            
-%             wingClStartAlpha    = -0.1;
-%             wingClEndAlpha      = 0.1;
-%             wingCdStartAlpha    = -0.15;
-%             wingCdEndAlpha      = 0.15;
-%             
-%             idx = 1:length(aeroTable.alpha);
-%             
-%             alphaClCrop = aeroTable.alpha(idx(abs(wingClStartAlpha-aeroTable.alpha)==min(abs(wingClStartAlpha-aeroTable.alpha))):...
-%                 idx(abs(wingClEndAlpha-aeroTable.alpha)==min(abs(wingClEndAlpha-aeroTable.alpha))));
-%             clCrop    = aeroTable.cl(idx(abs(wingClStartAlpha-aeroTable.alpha)==min(abs(wingClStartAlpha-aeroTable.alpha))):...
-%                 idx(abs(wingClEndAlpha-aeroTable.alpha)==min(abs(wingClEndAlpha-aeroTable.alpha))));
-%             alphaCdCrop = aeroTable.alpha(idx(abs(wingCdStartAlpha-aeroTable.alpha)==min(abs(wingCdStartAlpha-aeroTable.alpha))):...
-%                 idx(abs(wingCdEndAlpha-aeroTable.alpha)==min(abs(wingCdEndAlpha-aeroTable.alpha))));
-%             cdCrop    = aeroTable.cd(idx(abs(wingCdStartAlpha-aeroTable.alpha)==min(abs(wingCdStartAlpha-aeroTable.alpha))):...
-%                 idx(abs(wingCdEndAlpha-aeroTable.alpha)==min(abs(wingCdEndAlpha-aeroTable.alpha))));
-%             
-%             
-%             pl = polyfit(alphaClCrop,clCrop,1);
-%             aeroTable.kl1=pl(1);
-%             aeroTable.kl0=pl(2);
-%             
-%             pd = polyfit(alphaCdCrop,cdCrop,2);
-%             aeroTable.kd2=pd(1);
-%             aeroTable.kd1=pd(2);
-%             aeroTable.kd0=pd(3);
-%             
-%             aeroTable.clStartAlpha  = wingClStartAlpha;
-%             aeroTable.clEndAlpha    = wingClEndAlpha;
-%             aeroTable.cdStartAlpha  = wingCdStartAlpha;
-%             aeroTable.cdEndAlpha    = wingCdEndAlpha;
-%             
-%             
-            val = aeroTable;
+            val = loadAeroTable(obj.rudderFileName,obj.rudderClFitLimits,...
+                obj.rudderCdFitLimits,obj.stabilizerOswaldEfficiency,obj.stabilizerAspectRatio);
         end
         
         function val = get.wingThickness(obj)
-            val = regexp(obj.wingTable.fileName,'(naca\d{4}|n\d{4})','Match');
+            val = regexpi(obj.wingTable.fileName,'(naca\s?\d{4}|n\d{4})','Match');
             val = val{1};
             val = obj.refLengthWing*str2double(val(end-1:end))/100;
         end
         
         function val = get.rudderThickness(obj)
-            val = regexp(obj.rudderTable.fileName,'(naca\d{4}|n\d{4})','Match');
+            val = regexpi(obj.rudderTable.fileName,'(naca\s?\d{4}|n\d{4}|naca-\d{4})','Match');
             val = val{1};
             val = obj.refLengthRudder*str2double(val(end-1:end))/100;
         end
         function val = get.stabilizerThickness(obj)
-            val = regexp(obj.rudderTable.fileName,'(naca\d{4}|n\d{4})','Match');
+            val = regexpi(obj.rudderTable.fileName,'(naca\s?\d{4}|n\d{4}|naca-\d{4})','Match');
             val = val{1};
             val = obj.refLengthStabilizer*str2double(val(end-1:end))/100;
         end
         function val = get.addedMassMultiplier (obj)
-           val =  pi*(...
-               obj.wingSpan*(obj.wingThickness/2)^2+... % Term for wing
-               obj.rudderSpan*(obj.rudderThickness/2)^2+... % Term for rudder
-               obj.stabilizerSpan*(obj.stabilizerThickness/2)^2);   % Term for horizontal stablizer
+            val =  pi*(...
+                obj.wingSpan*(obj.wingThickness/2)^2+... % Term for wing
+                obj.rudderSpan*(obj.rudderThickness/2)^2+... % Term for rudder
+                obj.stabilizerSpan*(obj.stabilizerThickness/2)^2);   % Term for horizontal stablizer
         end
         function val = get.addedInertiaMultiplier(obj)
             val = pi*obj.rudderSpan*obj.momentArm^2*(obj.refLengthRudder/2)^2;
         end
         function val = get.wingCrossSectionArea(obj)
             % Go find the shape file for the wing
-            file = dir(fullfile(fileparts(which('OCKModel.slx')),'hydrofoilLibrary','shapeFiles','wing','*.dat'));
+            file = fullfile(fileparts(which('OCKModel.slx')),'hydrofoilLibrary','shapeFiles',obj.wingShapeFileName);
             delimiter = ' ';
             startRow = 2;
             formatSpec = '%f%f%[^\n\r]';
             
             %% Open the text file.
-            fileID = fopen(fullfile(file.folder,file.name),'r');
+            fileID = fopen(file,'r');
             
             %% Read columns of data according to the format.
             % This call is based on the structure of the file used to generate this
@@ -354,13 +217,13 @@ classdef plantClass < handle
         
         function val = get.rudderCrossSectionArea(obj)
             % Go find the shape file for the wing
-            file = dir(fullfile(fileparts(which('OCKModel.slx')),'hydrofoilLibrary','shapeFiles','rudder','*.dat'));
+            file = fullfile(fileparts(which('OCKModel.slx')),'hydrofoilLibrary','shapeFiles',obj.rudderShapeFileName);
             delimiter = ' ';
             startRow = 2;
             formatSpec = '%f%f%[^\n\r]';
             
             %% Open the text file.
-            fileID = fopen(fullfile(file.folder,file.name),'r');
+            fileID = fopen(file,'r');
             
             %% Read columns of data according to the format.
             % This call is based on the structure of the file used to generate this
@@ -371,7 +234,11 @@ classdef plantClass < handle
             val = obj.refLengthWing*[dataArray{1} dataArray{2}];
             val = polyarea(val(:,1),val(:,2));
         end
-        
+        function val = get.wingTable(obj)
+            val = loadAeroTable(obj.wingFileName,obj.wingClFitLimits,...
+                obj.wingCdFitLimits,obj.wingOswaldEfficiency,obj.wingAspectRatio);
+        end
     end
+    
 end
 
