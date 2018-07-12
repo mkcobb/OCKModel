@@ -14,24 +14,22 @@ classdef faultsClass < handle
         azimuthHigh     = pi/2;
         
         zenithEnable    = 1;
-        zenithLow       = -pi/2;
+        zenithLow       = 0;
         zenithHigh      = pi/2;
         
         speedEnable    = 0;
         speedLow       = 0;
         speedHigh      = 100;
         
-        wingStallEnable    = 0;
-        wingStallLow       = -20;
-        wingStallHigh      = 20;
+        wingStallEnable    = 1;
         
-        rudderStallEnable    = 0;
-        rudderStallLow       = -20;
-        rudderStallHigh      = 20;
+        rudderStallEnable    = 1;
         
-        forceZEnable    = 1;
-        forceZLow       = 0;
-        forceZHigh      = inf;
+        stabilizerStallEnable = 1;
+        
+        tetherTensionEnable    = 1;
+        tetherTensionLow       = 0;
+        tetherTensionHigh      = inf;
         
         stabilizerSaturationEnable    = 1;
 

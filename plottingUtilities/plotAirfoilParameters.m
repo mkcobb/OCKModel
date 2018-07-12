@@ -17,36 +17,39 @@ end
 h.fig = createFigure;
 
 h.ax1 = subplot(2,2,1);
-plot(foilTable.alpha,foilTable.cl,'LineWidth',2)
+plot(foilTable.alpha,foilTable.cl,'LineWidth',2,'Color','k')
 grid on
 hold on
-plot(foilTable.alpha,foilTable.alpha*foilTable.kl1+foilTable.kl0)
+plot(foilTable.alpha,foilTable.alpha*foilTable.kl1+foilTable.kl0,...
+    'LineWidth',2,'LineStyle','--')
 axis tight
-line(foilTable.clStartAlpha*[1 1],h.ax1.YLim)
-line(foilTable.clEndAlpha*[1 1],h.ax1.YLim)
-xlabel('$\alpha$')
+line(foilTable.clStartAlpha*[1 1],h.ax1.YLim,'LineWidth',2,'LineStyle','--')
+line(foilTable.clEndAlpha*[1 1],h.ax1.YLim,'LineWidth',2,'LineStyle','--')
+xlabel('$\alpha$ [rad]')
 ylabel('$C_L$')
 h.ax1.FontSize = 24;
 
 
 h.ax2 = subplot(2,2,2);
-plot(foilTable.alpha,foilTable.cd,'LineWidth',2)
+plot(foilTable.alpha,foilTable.cd,'LineWidth',2,'Color','k')
 grid on
 hold on
-plot(foilTable.alpha,foilTable.alpha.^2*foilTable.kd2+foilTable.kd1*foilTable.alpha+foilTable.kd0)
+plot(foilTable.alpha,...
+    foilTable.alpha.^2*foilTable.kd2+foilTable.kd1*foilTable.alpha+foilTable.kd0,...
+    'LineWidth',2,'LineStyle','--')
 axis tight
-line(foilTable.cdStartAlpha*[1 1],h.ax2.YLim)
-line(foilTable.cdEndAlpha*[1 1],h.ax2.YLim)
-xlabel('$\alpha$')
+line(foilTable.cdStartAlpha*[1 1],h.ax2.YLim,'LineWidth',2,'LineStyle','--')
+line(foilTable.cdEndAlpha*[1 1],h.ax2.YLim,'LineWidth',2,'LineStyle','--')
+xlabel('$\alpha$ [rad]')
 ylabel('$C_D$')
 h.ax2.FontSize = 24;
 
 h.ax3 = subplot(2,2,3);
-plot(foilTable.alpha,foilTable.cl./foilTable.cd,'LineWidth',2)
+plot(foilTable.alpha,foilTable.cl./foilTable.cd,'LineWidth',2,'Color','k')
 grid on
 hold on
-xlabel('$\alpha$')
-ylabel('$C_L$ \ $C_D$')
+xlabel('$\alpha$ [rad]')
+ylabel('$C_L$ / $C_D$')
 h.ax3.FontSize = 24;
 
 h.title = annotation('textbox', [0 0.9 1 0.1], ...
@@ -55,5 +58,13 @@ h.title = annotation('textbox', [0 0.9 1 0.1], ...
     'HorizontalAlignment', 'center',...
     'FontSize',24,...
     'Interpreter','none');
+
+h.ax1.XLim = [min(foilTable.alpha) max(foilTable.alpha)];
+h.ax2.XLim = h.ax1.XLim;
+h.ax3.XLim = h.ax1.XLim;
+
+
+
+linkaxes([h.ax1 h.ax2 h.ax3],'x')
 
 end

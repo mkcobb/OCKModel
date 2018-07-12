@@ -17,8 +17,16 @@ classdef controllerClass < handle
         tauR = 0.0500;  % Ref model time const: 1/(tauR*s+1)^2
         
         numSettlingLaps = 3;                 % Number of laps before starting tether reel out
-        numSimulationLaps = 5;               % Number of laps to run during reel out
-        tetherReelOutFilterTimeConstant = 2; % Time constant used to filter reel out command 
+        numSimulationLaps = 20;               % Number of laps to run during reel out
+        tetherReelOutFilterTimeConstant = 0.01; % Time constant used to filter reel out command 
+        
+        % Upper and lower distance limits for reel in/out
+        reelLowerLim = 40;
+        reelUpperLim = 100;
+        reelInWingAlpha   = -0.035*180/pi; % Target angle of attack for wing on reel-in [deg]
+        reelInRudderAlpha = 0 % Target angle of attack for rudder on reel-in [deg]
+        reelInSpeed = 5;
+        
     end
     
     properties (Dependent = false) % Property value is stored in object

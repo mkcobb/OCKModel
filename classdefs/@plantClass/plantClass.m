@@ -22,13 +22,13 @@ classdef plantClass < handle
         rudderSpan              = 2.5;  % Rudder span
         
         % Horizontal stabilizer parameters
-        stabilzerOswaldEfficiency   = 0.8;
+        stabilizerOswaldEfficiency  = 0.8;
         refLengthStabilizer         = 0.6; % Horizontal stabilizer chord length
         stabilizerSpan              = 2.5; % Horizontal stabilizer span
         
         % Initial Conditions
         initialTwistRate     = 0;  % Initial twist rate [deg/s]
-        initialRadius        = 50;
+        initialRadius        = 40;
         initialAzimuth       = 0;  % [deg]
         initialZenith        = 60; % [deg]
         initialRadiusRate    = 0;  % Initial rate of tether payout
@@ -50,6 +50,7 @@ classdef plantClass < handle
         rudderClFitLimits = 0.15*[-1 1];
         rudderCdFitLimits = 0.15*[-1 1];
         
+
     end
     properties (Dependent = false) % Property value is stored in object
         refAreaWing                      % Wing reference area
@@ -82,10 +83,19 @@ classdef plantClass < handle
         totalVolume                      % Total volume of the whole system
         aeroSurfacesVolume               % Volume of all aerodynamic surfaces
         mass                             % Total mass of system (calculated to give neutral buoyancy)
+        stabilizerFileName
+        stabilizerShapeFileName
+        
         
     end
     
     methods
+        function val = get.stabilizerFileName(obj)
+            val = obj.rudderFileName;
+        end
+        function val = get.stabilizerShapeFileName(obj)
+            val = obj.rudderShapeFileName;
+        end
         function val = get.mass(obj) % estimate the mass necessary to be neutrally buoyant
             val = environmentClass.rho*obj.totalVolume;
         end
@@ -158,7 +168,7 @@ classdef plantClass < handle
         function val = get.stabilizerAspectRatio(obj)
             val = obj.stabilizerSpan/obj.refLengthStabilizer;
         end
-       
+        
         
         function val = get.rudderTable(obj)
             val = loadAeroTable(obj.rudderFileName,obj.rudderClFitLimits,...
@@ -196,43 +206,17 @@ classdef plantClass < handle
             val = pi*obj.rudderSpan*obj.momentArm^2*(obj.refLengthRudder/2)^2;
         end
         function val = get.wingCrossSectionArea(obj)
-            % Go find the shape file for the wing
-            file = fullfile(fileparts(which('OCKModel.slx')),'hydrofoilLibrary','shapeFiles',obj.wingShapeFileName);
-            delimiter = ' ';
-            startRow = 2;
-            formatSpec = '%f%f%[^\n\r]';
-            
-            %% Open the text file.
-            fileID = fopen(file,'r');
-            
-            %% Read columns of data according to the format.
-            % This call is based on the structure of the file used to generate this
-            % code. If an error occurs for a different file, try regenerating the code
-            % from the Import Tool.
-            dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'MultipleDelimsAsOne', true, 'TextType', 'string', 'HeaderLines' ,startRow-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');
-            fclose(fileID);
-            val = obj.refLengthWing*[dataArray{1} dataArray{2}];
-            val = polyarea(val(:,1),val(:,2));
+            [x,y] = loadShapeFile(obj.wingShapeFileName);
+            x = obj.refLengthWing*x;
+            y = obj.refLengthWing*y;
+            val = polyarea(x,y);
         end
         
         function val = get.rudderCrossSectionArea(obj)
-            % Go find the shape file for the wing
-            file = fullfile(fileparts(which('OCKModel.slx')),'hydrofoilLibrary','shapeFiles',obj.rudderShapeFileName);
-            delimiter = ' ';
-            startRow = 2;
-            formatSpec = '%f%f%[^\n\r]';
-            
-            %% Open the text file.
-            fileID = fopen(file,'r');
-            
-            %% Read columns of data according to the format.
-            % This call is based on the structure of the file used to generate this
-            % code. If an error occurs for a different file, try regenerating the code
-            % from the Import Tool.
-            dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter, 'MultipleDelimsAsOne', true, 'TextType', 'string', 'HeaderLines' ,startRow-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');
-            fclose(fileID);
-            val = obj.refLengthWing*[dataArray{1} dataArray{2}];
-            val = polyarea(val(:,1),val(:,2));
+            [x,y] = loadShapeFile(obj.rudderShapeFileName);
+            x = obj.refLengthRudder*x;
+            y = obj.refLengthRudder*y;
+            val = polyarea(x,y);
         end
         function val = get.wingTable(obj)
             val = loadAeroTable(obj.wingFileName,obj.wingClFitLimits,...
